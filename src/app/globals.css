@@ -1,17 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f5f0e8;
-  --foreground: #171915;
-  --surface: #fffdf8;
-  --muted: #676b60;
-  --border: #d9d1c3;
-  --brand-orange: #c95b34;
-  --brand-lavender: #8a74a5;
-  --brand-olive: #66704b;
-  --brand-gold: #c8942e;
-  --brand-navy: #142a3d;
-  --brand-teal: #19665f;
+  --background: #fffef9;
+  --foreground: #0f1b2d;
+  --surface: #ffffff;
+  --muted: #5f665b;
+  --border: #e3e9e4;
+  --brand-orange: #c9694a;
+  --brand-lavender: #a6a3cb;
+  --brand-olive: #6c7a4e;
+  --brand-gold: #dba13a;
+  --brand-navy: #0f1b2d;
+  --brand-teal: #0e5c5a;
+  --brand-mint: #a9c9c0;
 }
 
 @theme inline {
@@ -26,8 +27,8 @@
   --color-brand-gold: var(--brand-gold);
   --color-brand-navy: var(--brand-navy);
   --color-brand-teal: var(--brand-teal);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-mono: "Courier New", monospace;
 }
 
 * {
@@ -38,7 +39,17 @@ body {
   margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 96px;
+}
+
+button,
+input {
+  font: inherit;
 }
 
 ::selection {
