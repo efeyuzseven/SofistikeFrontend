@@ -5,13 +5,16 @@
   --foreground: #171915;
   --surface: #fffdf8;
   --muted: #676b60;
-  --border: #d9d1c3;
-  --brand-orange: #c95b34;
-  --brand-lavender: #8a74a5;
-  --brand-olive: #66704b;
-  --brand-gold: #c8942e;
-  --brand-navy: #142a3d;
-  --brand-teal: #19665f;
+  --border: #e5d3bd;
+  --brand-orange: #bf5d30;
+  --brand-lavender: #9683b1;
+  --brand-olive: #5b613d;
+  --brand-gold: #cf902a;
+  --brand-purple: #a68acb;
+  --brand-navy: #091724;
+  --brand-sand: #e5d3bd;
+  --brand-teal: #034f4f;
+  --brand-mint: #9fbeb6;
 }
 
 @theme inline {
@@ -24,8 +27,11 @@
   --color-brand-lavender: var(--brand-lavender);
   --color-brand-olive: var(--brand-olive);
   --color-brand-gold: var(--brand-gold);
+  --color-brand-purple: var(--brand-purple);
   --color-brand-navy: var(--brand-navy);
+  --color-brand-sand: var(--brand-sand);
   --color-brand-teal: var(--brand-teal);
+  --color-brand-mint: var(--brand-mint);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

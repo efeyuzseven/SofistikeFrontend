@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type {
   CSSProperties,
@@ -33,23 +34,28 @@ type ServiceItem = {
   position: string;
 };
 
-const modules: ModuleItem[] = [
-  { name: "Uyku", color: "#a6a3cb", x: 2.87, y: 11.37 },
-  { name: "Ev Tekstili", color: "#c9694a", x: 34.51, y: 11.37 },
-  { name: "Aroma", color: "#6c7a4e", x: 66.09, y: 11.37 },
-  { name: "Mutfak", color: "#dba13a", x: 2.87, y: 40.59 },
-  { name: "Banyo", color: "#0e5c5a", x: 34.51, y: 40.59 },
-  { name: "Çamaşır", color: "#a9c9c0", x: 66.09, y: 40.59 },
-  { name: "Dekorasyon", color: "#dba13a", x: 2.87, y: 69.5 },
-  { name: "Evcil Dostlar", color: "#c9694a", x: 34.51, y: 69.5 },
-  { name: "İnovasyon Lab", color: "#0f1b2d", x: 66.09, y: 69.5 },
-];
+const brandPalette = {
+  terracotta: "#bf5d30",
+  lavender: "#9683b1",
+  olive: "#5b613d",
+  ochre: "#cf902a",
+  softPurple: "#a68acb",
+  midnight: "#091724",
+  sand: "#e5d3bd",
+  deepTeal: "#034f4f",
+  mistMint: "#9fbeb6",
+} as const;
 
-const heroSlides = [
-  { name: "Uyku", image: "/images/sofistike-home-reference.png" },
-  { name: "Aroma", image: "/images/hero-sleep.png" },
-  { name: "Mutfak", image: "/images/hero-home.png" },
-  { name: "Banyo", image: "/images/hero-living.png" },
+const modules: ModuleItem[] = [
+  { name: "Uyku", color: brandPalette.softPurple, x: 2.87, y: 11.37 },
+  { name: "Ev Tekstili", color: brandPalette.terracotta, x: 34.51, y: 11.37 },
+  { name: "Aroma", color: brandPalette.olive, x: 66.09, y: 11.37 },
+  { name: "Mutfak", color: brandPalette.ochre, x: 2.87, y: 40.59 },
+  { name: "Banyo", color: brandPalette.deepTeal, x: 34.51, y: 40.59 },
+  { name: "Çamaşır", color: brandPalette.mistMint, x: 66.09, y: 40.59 },
+  { name: "Dekorasyon", color: brandPalette.ochre, x: 2.87, y: 69.5 },
+  { name: "Evcil Dostlar", color: brandPalette.terracotta, x: 34.51, y: 69.5 },
+  { name: "İnovasyon Lab", color: brandPalette.midnight, x: 66.09, y: 69.5 },
 ];
 
 const featuredProducts: ProductItem[] = [
@@ -60,7 +66,7 @@ const featuredProducts: ProductItem[] = [
     price: "₺349",
     badge: "Review Lab",
     image: "/images/hero-home.png",
-    color: "#6c7a4e",
+    color: brandPalette.olive,
   },
   {
     name: "Yastık & Tekstil Ferahlatıcı",
@@ -68,7 +74,7 @@ const featuredProducts: ProductItem[] = [
     description: "Yatak odası tekstillerinde temiz ve rahatlatıcı his.",
     price: "₺279",
     image: "/images/hero-sleep.png",
-    color: "#a6a3cb",
+    color: brandPalette.softPurple,
   },
   {
     name: "Bulaşık Deterjanı Limon",
@@ -76,7 +82,7 @@ const featuredProducts: ProductItem[] = [
     description: "Günlük mutfak düzeni için canlı limon ferahlığı.",
     price: "₺189",
     image: "/images/hero-home.png",
-    color: "#dba13a",
+    color: brandPalette.ochre,
   },
 ];
 
@@ -86,7 +92,7 @@ const serviceItems: ServiceItem[] = [
     title: "Review Audit™",
     description:
       "Rakip ve kategori yorumlarında tekrar eden ihtiyaçları keşfederiz.",
-    color: "#c9694a",
+    color: brandPalette.terracotta,
     position: "0 0",
   },
   {
@@ -94,7 +100,7 @@ const serviceItems: ServiceItem[] = [
     title: "Product Audit™",
     description:
       "Mevcut ürünün performansını kullanıcı deneyimiyle birlikte inceleriz.",
-    color: "#a6a3cb",
+    color: brandPalette.softPurple,
     position: "50% 0",
   },
   {
@@ -102,7 +108,7 @@ const serviceItems: ServiceItem[] = [
     title: "Packaging Audit™",
     description:
       "Ambalajın kullanım, görünüm ve deneyim tarafını analiz ederiz.",
-    color: "#6c7a4e",
+    color: brandPalette.olive,
     position: "100% 0",
   },
   {
@@ -110,7 +116,7 @@ const serviceItems: ServiceItem[] = [
     title: "Category Audit™",
     description:
       "Kategori fırsatlarını ve değişen beklentileri görünür kılarız.",
-    color: "#dba13a",
+    color: brandPalette.ochre,
     position: "0 100%",
   },
   {
@@ -118,7 +124,7 @@ const serviceItems: ServiceItem[] = [
     title: "Trend Audit™",
     description:
       "Tüketici alışkanlıklarını ve yükselen eğilimleri takip ederiz.",
-    color: "#0e5c5a",
+    color: brandPalette.deepTeal,
     position: "50% 100%",
   },
   {
@@ -126,7 +132,7 @@ const serviceItems: ServiceItem[] = [
     title: "Review DNA™",
     description:
       "Ürünün kullanıcılarla kurduğu bağın ayrıntılı haritasını çıkarırız.",
-    color: "#a9c9c0",
+    color: brandPalette.mistMint,
     position: "100% 100%",
   },
 ];
@@ -366,7 +372,6 @@ function ProductCard({
 }
 
 export default function HomePage() {
-  const [heroIndex, setHeroIndex] = useState(0);
   const [dragging, setDragging] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
   const moduleRailRef = useRef<HTMLDivElement>(null);
@@ -383,13 +388,6 @@ export default function HomePage() {
     startX: 0,
     startScroll: 0,
   });
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setHeroIndex((current) => (current + 1) % heroSlides.length);
-    }, 4200);
-    return () => window.clearInterval(timer);
-  }, []);
 
   const scrollModules = useCallback((direction: 1 | -1) => {
     const rail = moduleRailRef.current;
@@ -579,49 +577,18 @@ export default function HomePage() {
         </header>
       </div>
 
-      <section className={styles.hero} id="anasayfa">
-        <div className={styles.heroCopy}>
-          <BrandLogo large />
-          <h1>
-            SMART IDEAS.
-            <br />
-            <span>BETTER LIVING.</span>
-          </h1>
-          <p className={styles.listeningSignature}>
-            Better starts
-            <br />
-            with listening.
-          </p>
-          <p className={styles.promise}>
-            Sizi dinliyor, <strong>daha iyi ürünleri</strong> birlikte
-            tasarlıyoruz.
-          </p>
-          <div className={styles.heroButtons}>
-            <a className={styles.primaryButton} href="#moduller">
-              Alışverişe Başla
-            </a>
-          </div>
-        </div>
-
-        <div
-          className={styles.heroVisual}
-          aria-label={`${heroSlides[heroIndex].name} ürünleri`}
-        >
-          {heroSlides.map((slide, index) => (
-            <span
-              aria-hidden="true"
-              className={`${styles.heroSlide} ${
-                index === heroIndex ? styles.heroSlideActive : ""
-              }`}
-              key={slide.name}
-              style={
-                {
-                  "--hero-image": `url(${slide.image})`,
-                } as CSSProperties
-              }
-            />
-          ))}
-        </div>
+      <section
+        className={`${styles.hero} ${styles.manifestoHero}`}
+        id="anasayfa"
+      >
+        <Image
+          alt="Sofistike +XTRA — Smart Ideas. Better Living marka manifestosu"
+          className={styles.manifestoHeroImage}
+          fetchPriority="high"
+          fill
+          sizes="100vw"
+          src="/images/sofistike-manifesto-hero.webp"
+        />
       </section>
 
       <section className={styles.modules} id="moduller">

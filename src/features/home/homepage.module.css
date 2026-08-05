@@ -1,12 +1,13 @@
 .page {
-  --terracotta: #c9694a;
-  --lavender: #a6a3cb;
-  --olive: #6c7a4e;
-  --ochre: #dba13a;
-  --midnight: #0f1b2d;
-  --warm-sand: #e7dcc6;
-  --deep-teal: #0e5c5a;
-  --mist-mint: #a9c9c0;
+  --terracotta: #bf5d30;
+  --lavender: #9683b1;
+  --olive: #5b613d;
+  --ochre: #cf902a;
+  --soft-purple: #a68acb;
+  --midnight: #091724;
+  --warm-sand: #e5d3bd;
+  --deep-teal: #034f4f;
+  --mist-mint: #9fbeb6;
   --pink: var(--terracotta);
   --ink: var(--midnight);
   --paper: #fffef9;
@@ -33,7 +34,7 @@
   justify-content: flex-end;
   gap: clamp(18px, 2.4vw, 38px);
   padding: 0 clamp(28px, 3.4vw, 64px);
-  border-bottom: 1px solid rgba(15, 27, 45, 0.07);
+  border-bottom: 1px solid rgba(9, 23, 36, 0.07);
   background: linear-gradient(90deg, #fffaf4, #f5f2fa);
   font-size: 10px;
   font-weight: 700;
@@ -61,14 +62,14 @@
   left: calc(clamp(18px, 2.4vw, 38px) / -2);
   width: 1px;
   height: 13px;
-  background: rgba(15, 27, 45, 0.12);
+  background: rgba(9, 23, 36, 0.12);
   content: "";
   transform: translateY(-50%);
 }
 
 .utilityBar span {
   margin-left: 4px;
-  color: #675c96;
+  color: var(--lavender);
 }
 
 .header {
@@ -121,7 +122,7 @@
 
 .brandPlus {
   margin-right: 0.04em;
-  color: #df623b;
+  color: var(--terracotta);
   font-size: 0.7em;
   letter-spacing: 0;
 }
@@ -130,10 +131,10 @@
   margin-right: 0.02em;
   background: linear-gradient(
     135deg,
-    #e05f3c 0 27%,
-    #8f7ccc 28% 58%,
-    #00827b 59% 76%,
-    #738b45 77%
+    var(--terracotta) 0 27%,
+    var(--lavender) 28% 58%,
+    var(--deep-teal) 59% 76%,
+    var(--olive) 77%
   );
   background-clip: text;
   color: transparent;
@@ -222,7 +223,7 @@
 .megaMenu > div {
   min-height: 470px;
   padding: 34px clamp(34px, 5vw, 84px) 38px;
-  border-right: 1px solid rgba(15, 27, 45, 0.06);
+  border-right: 1px solid rgba(9, 23, 36, 0.06);
   background: linear-gradient(145deg, #fff5f1, #fffaf7);
 }
 
@@ -243,7 +244,7 @@
 }
 
 .megaMenu > div:nth-child(2) h3 {
-  color: #7770ae;
+  color: var(--lavender);
 }
 
 .megaMenu > div:nth-child(3) h3 {
@@ -274,7 +275,7 @@
 }
 
 .megaMenu > div:nth-child(2) a span {
-  color: #8580bb;
+  color: var(--soft-purple);
 }
 
 .megaMenu > div:nth-child(3) a span {
@@ -350,12 +351,12 @@
   background:
     radial-gradient(
       circle at 8% 12%,
-      rgba(219, 161, 58, 0.16),
+      rgba(207, 144, 42, 0.16),
       transparent 30%
     ),
     radial-gradient(
       circle at 82% 80%,
-      rgba(166, 163, 203, 0.2),
+      rgba(150, 131, 177, 0.2),
       transparent 34%
     ),
     linear-gradient(
@@ -382,10 +383,10 @@
 .heroCopy h1 span {
   background: linear-gradient(
     90deg,
-    #db5d3b,
-    #8d79c8 38%,
-    #007d78 72%,
-    #e0a11d
+    var(--terracotta),
+    var(--lavender) 38%,
+    var(--deep-teal) 72%,
+    var(--ochre)
   );
   background-clip: text;
   color: transparent;
@@ -453,19 +454,19 @@
   border: 2px solid var(--deep-teal);
   color: #fff;
   background: var(--deep-teal);
-  box-shadow: 0 8px 20px rgba(14, 92, 90, 0.18);
+  box-shadow: 0 8px 20px rgba(3, 79, 79, 0.18);
 }
 
 .secondaryButton {
   border: 2px solid var(--ochre);
-  color: #80540c;
+  color: var(--ochre);
   background: #fff8e8;
 }
 
 .primaryButton:hover,
 .secondaryButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(15, 27, 45, 0.14);
+  box-shadow: 0 10px 24px rgba(9, 23, 36, 0.14);
 }
 
 .heroVisual {
@@ -549,7 +550,7 @@
 
 .heroDots .activeDot {
   background: var(--pink);
-  box-shadow: 0 0 0 2px rgba(228, 20, 87, 0.35);
+  box-shadow: 0 0 0 2px rgba(191, 93, 48, 0.35);
 }
 
 .heroThumbs {
@@ -575,7 +576,7 @@
 }
 
 .heroThumbs .activeThumb {
-  border-color: #ec2d68;
+  border-color: var(--terracotta);
 }
 
 .spriteThumb {
@@ -744,8 +745,8 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #24a06f;
-  box-shadow: 0 0 0 4px rgba(36, 160, 111, 0.12);
+  background: var(--deep-teal);
+  box-shadow: 0 0 0 4px rgba(3, 79, 79, 0.12);
   content: "";
   animation: livePulse 1.2s ease-in-out infinite;
 }
@@ -765,12 +766,12 @@
   background:
     radial-gradient(
       circle at 12% 16%,
-      rgba(201, 105, 74, 0.09),
+      rgba(191, 93, 48, 0.09),
       transparent 27%
     ),
     radial-gradient(
       circle at 88% 78%,
-      rgba(169, 201, 192, 0.22),
+      rgba(159, 190, 182, 0.22),
       transparent 31%
     ),
     #fffaf2;
@@ -788,7 +789,7 @@
 .brandStatement h2 {
   max-width: 1380px;
   margin: 0 auto;
-  color: #3f4931;
+  color: var(--olive);
   font-family: "Segoe Print", "Bradley Hand", cursive;
   font-size: clamp(34px, 4vw, 68px);
   font-weight: 600;
@@ -866,7 +867,7 @@
   border-top: 5px solid var(--terracotta);
   border-radius: 20px;
   background: linear-gradient(145deg, #fff8f3, #f7f3ff);
-  box-shadow: 0 18px 45px rgba(15, 27, 45, 0.08);
+  box-shadow: 0 18px 45px rgba(9, 23, 36, 0.08);
 }
 
 .manifestoLead h2 {
@@ -878,7 +879,7 @@
 }
 
 .manifestoLead h2 span {
-  color: #6d8345;
+  color: var(--olive);
 }
 
 .manifestoLead > p {
@@ -893,7 +894,7 @@
   margin-top: 38px;
   overflow: hidden;
   border-radius: 12px;
-  box-shadow: 0 22px 50px rgba(15, 27, 45, 0.11);
+  box-shadow: 0 22px 50px rgba(9, 23, 36, 0.11);
 }
 
 .needsPanel {
@@ -905,16 +906,16 @@
   background:
     radial-gradient(
       circle at 100% 0,
-      rgba(166, 163, 203, 0.16),
+      rgba(150, 131, 177, 0.16),
       transparent 28%
     ),
     radial-gradient(
       circle at 0 100%,
-      rgba(169, 201, 192, 0.2),
+      rgba(159, 190, 182, 0.2),
       transparent 30%
     ),
     #ffffff;
-  box-shadow: 0 18px 45px rgba(15, 27, 45, 0.07);
+  box-shadow: 0 18px 45px rgba(9, 23, 36, 0.07);
 }
 
 .needsTitleRow {
@@ -948,15 +949,15 @@
   background:
     radial-gradient(
       circle at 100% 0,
-      rgba(219, 161, 58, 0.34),
+      rgba(207, 144, 42, 0.34),
       transparent 34%
     ),
-    linear-gradient(155deg, var(--deep-teal), #184f64);
-  box-shadow: 0 18px 40px rgba(14, 92, 90, 0.18);
+    linear-gradient(155deg, var(--deep-teal), var(--midnight));
+  box-shadow: 0 18px 40px rgba(3, 79, 79, 0.18);
 }
 
 .needStatement > span {
-  color: #f3c76a;
+  color: var(--ochre);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.15em;
@@ -1002,11 +1003,11 @@
   position: relative;
   min-height: 410px;
   overflow: hidden;
-  border: 1px solid rgba(15, 27, 45, 0.08);
+  border: 1px solid rgba(9, 23, 36, 0.08);
   border-radius: 24px;
   background:
-    linear-gradient(rgba(169, 201, 192, 0.16) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(169, 201, 192, 0.16) 1px, transparent 1px),
+    linear-gradient(rgba(159, 190, 182, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(159, 190, 182, 0.16) 1px, transparent 1px),
     linear-gradient(145deg, #fcfffe, #f7f4fb);
   background-size:
     28px 28px,
@@ -1019,7 +1020,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  border: 1px dashed rgba(14, 92, 90, 0.22);
+  border: 1px dashed rgba(3, 79, 79, 0.22);
   border-radius: 50%;
   content: "";
   transform: translate(-50%, -50%);
@@ -1050,7 +1051,7 @@
   border-radius: 50%;
   color: #fff;
   background: linear-gradient(145deg, var(--terracotta), var(--ochre));
-  box-shadow: 0 18px 36px rgba(201, 105, 74, 0.24);
+  box-shadow: 0 18px 36px rgba(191, 93, 48, 0.24);
   transform: translate(-50%, -50%);
 }
 
@@ -1083,10 +1084,10 @@
   align-items: center;
   gap: 10px;
   padding: 12px;
-  border: 1px solid rgba(15, 27, 45, 0.08);
+  border: 1px solid rgba(9, 23, 36, 0.08);
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 10px 24px rgba(15, 27, 45, 0.09);
+  box-shadow: 0 10px 24px rgba(9, 23, 36, 0.09);
   transition: transform 180ms ease;
 }
 
@@ -1124,7 +1125,7 @@
 }
 
 .needGrid div:hover {
-  box-shadow: 0 14px 30px rgba(15, 27, 45, 0.14);
+  box-shadow: 0 14px 30px rgba(9, 23, 36, 0.14);
 }
 
 .needGrid div:nth-child(1):hover {
@@ -1142,8 +1143,8 @@
   place-items: center;
   border-radius: 50%;
   color: #fff;
-  background: #8175be;
-  box-shadow: 0 8px 18px rgba(129, 117, 190, 0.24);
+  background: var(--lavender);
+  box-shadow: 0 8px 18px rgba(150, 131, 177, 0.24);
   font-size: 20px;
 }
 
@@ -1156,7 +1157,7 @@
 }
 
 .needGrid div:nth-child(4) span {
-  background: #2e8c89;
+  background: var(--deep-teal);
 }
 
 .needGrid div:nth-child(5) span {
@@ -1169,7 +1170,7 @@
   right: 10px;
   padding: 3px 6px;
   border-radius: 999px;
-  color: rgba(15, 27, 45, 0.45);
+  color: rgba(9, 23, 36, 0.45);
   background: #fff;
   font-size: 10px;
   font-weight: 800;
@@ -1191,7 +1192,7 @@
   overflow: hidden;
   border-radius: 16px;
   background: var(--midnight);
-  box-shadow: 0 16px 32px rgba(15, 27, 45, 0.13);
+  box-shadow: 0 16px 32px rgba(9, 23, 36, 0.13);
 }
 
 .productPrinciples div {
@@ -1203,20 +1204,20 @@
 }
 
 .productPrinciples div:nth-child(2) {
-  background: rgba(166, 163, 203, 0.12);
+  background: rgba(150, 131, 177, 0.12);
 }
 
 .productPrinciples div:nth-child(3) {
-  background: rgba(219, 161, 58, 0.14);
+  background: rgba(207, 144, 42, 0.14);
 }
 
 .productPrinciples div:nth-child(4) {
-  background: rgba(201, 105, 74, 0.15);
+  background: rgba(191, 93, 48, 0.15);
 }
 
 .productPrinciples div:nth-child(5) {
   border-right: 0;
-  background: rgba(169, 201, 192, 0.12);
+  background: rgba(159, 190, 182, 0.12);
 }
 
 .productPrinciples span {
@@ -1253,7 +1254,7 @@
   border-top: 5px solid var(--ochre);
   border-radius: 20px;
   background: linear-gradient(145deg, #fffaf0, #f5fbf8);
-  box-shadow: 0 18px 45px rgba(15, 27, 45, 0.08);
+  box-shadow: 0 18px 45px rgba(9, 23, 36, 0.08);
 }
 
 .valuesPanel article {
@@ -1262,7 +1263,7 @@
   gap: 15px;
   margin-top: 14px;
   padding: 18px;
-  border: 1px solid rgba(15, 27, 45, 0.07);
+  border: 1px solid rgba(9, 23, 36, 0.07);
   border-radius: 14px;
   background: #fff2ed;
 }
@@ -1296,7 +1297,7 @@
 }
 
 .valuesPanel article:nth-of-type(2) > span {
-  background: #8f7ccc;
+  background: var(--lavender);
 }
 
 .valuesPanel article:nth-of-type(3) > span {
@@ -1337,17 +1338,17 @@
   overflow: hidden;
   align-self: start;
   padding: clamp(30px, 3vw, 50px);
-  border: 1px solid rgba(14, 92, 90, 0.12);
+  border: 1px solid rgba(3, 79, 79, 0.12);
   border-radius: 22px;
   color: var(--midnight);
   background:
     radial-gradient(
       circle at 92% 15%,
-      rgba(219, 161, 58, 0.26),
+      rgba(207, 144, 42, 0.26),
       transparent 22%
     ),
     linear-gradient(135deg, #e8f6f2 0%, #f1effa 56%, #fff5e6 100%);
-  box-shadow: 0 20px 45px rgba(15, 27, 45, 0.1);
+  box-shadow: 0 20px 45px rgba(9, 23, 36, 0.1);
 }
 
 .rlMark {
@@ -1396,11 +1397,11 @@
   position: relative;
   min-height: 230px;
   padding: 24px 19px;
-  border: 1px solid rgba(15, 27, 45, 0.07);
+  border: 1px solid rgba(9, 23, 36, 0.07);
   border-top: 4px solid var(--terracotta);
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.82);
-  box-shadow: 0 12px 30px rgba(15, 27, 45, 0.06);
+  box-shadow: 0 12px 30px rgba(9, 23, 36, 0.06);
 }
 
 .process article:nth-child(2) {
@@ -1459,7 +1460,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(15, 27, 45, 0.07);
+  border: 1px solid rgba(9, 23, 36, 0.07);
   border-radius: 14px;
   background: #fff2ed;
 }
@@ -1520,7 +1521,7 @@
   align-items: center;
   gap: 9px;
   padding: 10px 13px;
-  border: 1px solid rgba(15, 27, 45, 0.1);
+  border: 1px solid rgba(9, 23, 36, 0.1);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.5);
   font-size: 12px;
@@ -1566,11 +1567,11 @@
   background:
     radial-gradient(
       circle at 100% 0,
-      rgba(219, 161, 58, 0.24),
+      rgba(207, 144, 42, 0.24),
       transparent 35%
     ),
     linear-gradient(145deg, #eaf7f5, #f4f1fb);
-  box-shadow: inset 12px 0 0 rgba(166, 163, 203, 0.16);
+  box-shadow: inset 12px 0 0 rgba(150, 131, 177, 0.16);
 }
 
 .ourPromise > .eyebrow {
@@ -1582,7 +1583,7 @@
   min-height: 112px;
   margin: 0;
   padding: 20px 16px;
-  border: 1px solid rgba(15, 27, 45, 0.08);
+  border: 1px solid rgba(9, 23, 36, 0.08);
   border-radius: 14px;
   color: #4d5a56;
   background: rgba(255, 255, 255, 0.72);
@@ -1599,7 +1600,7 @@
   min-height: 500px;
   grid-template-columns: minmax(0, 1.08fr) minmax(420px, 0.92fr);
   overflow: hidden;
-  border-bottom: 1px solid rgba(15, 27, 45, 0.08);
+  border-bottom: 1px solid rgba(9, 23, 36, 0.08);
   background: #fffdf8;
 }
 
@@ -1624,12 +1625,12 @@
   flex-direction: column;
   justify-content: center;
   padding: clamp(34px, 4.2vw, 70px);
-  border-right: 1px solid rgba(15, 27, 45, 0.08);
+  border-right: 1px solid rgba(9, 23, 36, 0.08);
   background:
-    radial-gradient(circle at 8% 8%, rgba(169, 201, 192, 0.3), transparent 35%),
+    radial-gradient(circle at 8% 8%, rgba(159, 190, 182, 0.3), transparent 35%),
     radial-gradient(
       circle at 92% 94%,
-      rgba(166, 163, 203, 0.22),
+      rgba(150, 131, 177, 0.22),
       transparent 34%
     ),
     #f8fbf9;
@@ -1666,7 +1667,7 @@
   min-height: 290px;
   grid-template-columns: minmax(190px, 0.95fr) minmax(220px, 1.05fr);
   overflow: hidden;
-  border: 1px solid rgba(15, 27, 45, 0.09);
+  border: 1px solid rgba(9, 23, 36, 0.09);
   border-top: 5px solid var(--service-color);
   border-radius: 14px;
   background: #fffefb;
@@ -1791,7 +1792,7 @@
   height: 38px;
   place-items: center;
   padding: 0;
-  border: 1px solid rgba(14, 92, 90, 0.2);
+  border: 1px solid rgba(3, 79, 79, 0.2);
   border-radius: 50%;
   color: var(--deep-teal);
   background: rgba(255, 255, 255, 0.86);
@@ -1823,7 +1824,7 @@
     #000 95%,
     transparent
   );
-  scrollbar-color: rgba(166, 163, 203, 0.68) transparent;
+  scrollbar-color: rgba(150, 131, 177, 0.68) transparent;
   scrollbar-width: thin;
   touch-action: pan-y;
   user-select: none;
@@ -1846,7 +1847,7 @@
   grid-template-columns: 124px minmax(0, 1fr);
   flex: 0 0 auto;
   overflow: hidden;
-  border: 1px solid rgba(15, 27, 45, 0.08);
+  border: 1px solid rgba(9, 23, 36, 0.08);
   border-left: 4px solid var(--service-color);
   border-radius: 11px;
   background: rgba(255, 254, 251, 0.96);
@@ -1922,9 +1923,9 @@
   height: 36px;
   place-items: center;
   padding: 0;
-  border: 1px solid rgba(166, 163, 203, 0.45);
+  border: 1px solid rgba(150, 131, 177, 0.45);
   border-radius: 50%;
-  color: #675c96;
+  color: var(--lavender);
   background: rgba(255, 255, 255, 0.9);
   cursor: pointer;
   font-size: 17px;
@@ -1936,7 +1937,7 @@
 
 .serviceFlowControls button:hover {
   color: #fff;
-  background: #675c96;
+  background: var(--lavender);
   transform: translateY(-2px);
 }
 
@@ -1948,7 +1949,7 @@
   background:
     radial-gradient(
       circle at 90% 8%,
-      rgba(169, 201, 192, 0.28),
+      rgba(159, 190, 182, 0.28),
       transparent 35%
     ),
     #fffdf8;
@@ -1956,7 +1957,7 @@
 
 .simpleManifestoCopy h2 {
   margin: 20px 0 26px;
-  color: #3f4931;
+  color: var(--olive);
   font-family: "Segoe Print", "Bradley Hand", cursive;
   font-size: clamp(38px, 4.2vw, 68px);
   font-weight: 600;
@@ -1965,7 +1966,7 @@
 }
 
 .simpleManifestoCopy h2 .manifestoCustomer {
-  color: #3f4931;
+  color: var(--olive);
 }
 
 .simpleManifestoCopy h2 .manifestoProblem {
@@ -2177,7 +2178,7 @@
   gap: 0 18px;
   overflow: hidden;
   padding: 18px;
-  border: 1px solid rgba(15, 27, 45, 0.08);
+  border: 1px solid rgba(9, 23, 36, 0.08);
   border-top: 4px solid var(--service-color);
   border-radius: 9px;
   background: linear-gradient(
@@ -2204,7 +2205,7 @@
   align-self: center;
   margin: 0;
   overflow: hidden;
-  border: 1px solid rgba(15, 27, 45, 0.07);
+  border: 1px solid rgba(9, 23, 36, 0.07);
   border-radius: 7px;
   background-color: #f5efe5;
   background-image: url("/images/services-sprite-v2.png");
@@ -2359,7 +2360,7 @@
   background:
     radial-gradient(
       circle at 91% 25%,
-      rgba(201, 105, 74, 0.17),
+      rgba(191, 93, 48, 0.17),
       transparent 31%
     ),
     #fff1e4;
@@ -2370,7 +2371,7 @@
   background:
     radial-gradient(
       circle at 91% 25%,
-      rgba(219, 161, 58, 0.18),
+      rgba(207, 144, 42, 0.18),
       transparent 31%
     ),
     #f5eee4;
@@ -2440,7 +2441,7 @@
 }
 
 .insightGrid .prototype {
-  color: #b87513;
+  color: var(--ochre);
 }
 
 .evidence {
@@ -2467,7 +2468,7 @@
   justify-content: flex-end;
   overflow: hidden;
   padding: 26px;
-  border: 1px solid rgba(15, 27, 45, 0.07);
+  border: 1px solid rgba(9, 23, 36, 0.07);
   border-top: 4px solid var(--stat-color);
   border-radius: 7px;
   background:
@@ -2559,7 +2560,7 @@
   background:
     radial-gradient(
       circle at 90% 15%,
-      rgba(166, 163, 203, 0.35),
+      rgba(150, 131, 177, 0.35),
       transparent 38%
     ),
     linear-gradient(135deg, #eef7f5, #fffaf0);
@@ -2591,7 +2592,7 @@
   min-height: 45px;
   place-items: center;
   padding: 6px 4px;
-  border: 1px solid rgba(14, 92, 90, 0.12);
+  border: 1px solid rgba(3, 79, 79, 0.12);
   border-radius: 6px;
   color: var(--midnight);
   background: rgba(255, 255, 255, 0.68);
@@ -2646,7 +2647,7 @@
   border-bottom: 0;
   border-radius: 30px 30px 0 0;
   background: #fffefa;
-  box-shadow: 0 18px 36px rgba(15, 27, 45, 0.16);
+  box-shadow: 0 18px 36px rgba(9, 23, 36, 0.16);
 }
 
 .phoneNotch {
@@ -2717,13 +2718,13 @@
   align-items: center;
   gap: clamp(24px, 3vw, 48px);
   padding: 12px 4vw;
-  border-top: 1px solid rgba(15, 27, 45, 0.08);
+  border-top: 1px solid rgba(9, 23, 36, 0.08);
   color: #fffaf5;
   background:
-    radial-gradient(circle at 8% 20%, rgba(201, 105, 74, 0.2), transparent 30%),
+    radial-gradient(circle at 8% 20%, rgba(191, 93, 48, 0.2), transparent 30%),
     radial-gradient(
       circle at 88% 80%,
-      rgba(166, 163, 203, 0.22),
+      rgba(150, 131, 177, 0.22),
       transparent 32%
     ),
     linear-gradient(110deg, #202b3d, #393247 58%, #49383f);
@@ -2749,12 +2750,12 @@
 }
 
 .footerPromise strong:nth-of-type(2) {
-  color: #c9c2e5;
+  color: var(--soft-purple);
   transform: rotate(1deg);
 }
 
 .footerPromise strong:nth-of-type(3) {
-  color: #ee9a7d;
+  color: var(--terracotta);
   transform: rotate(-0.5deg);
 }
 
@@ -2780,11 +2781,11 @@
   justify-self: end;
   gap: 9px;
   padding: 7px 14px 7px 7px;
-  border: 2px solid rgba(201, 105, 74, 0.48);
+  border: 2px solid rgba(191, 93, 48, 0.48);
   border-radius: 17px;
-  color: #8a4e2f;
+  color: var(--terracotta);
   background: rgba(255, 255, 255, 0.78);
-  box-shadow: 0 10px 24px rgba(124, 77, 53, 0.1);
+  box-shadow: 0 10px 24px rgba(191, 93, 48, 0.1);
   text-decoration: none;
   transition:
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -2794,7 +2795,7 @@
 
 .ideaCta:hover {
   background: #fff;
-  box-shadow: 0 16px 32px rgba(124, 77, 53, 0.18);
+  box-shadow: 0 16px 32px rgba(191, 93, 48, 0.18);
   transform: translateY(-3px) scale(1.07);
 }
 
@@ -2807,7 +2808,7 @@
   height: 48px;
   flex: 0 0 48px;
   border-radius: 13px;
-  background: rgba(166, 163, 203, 0.14) url("/images/idea-girl.png") center 7% /
+  background: rgba(150, 131, 177, 0.14) url("/images/idea-girl.png") center 7% /
     126% auto no-repeat;
 }
 
@@ -2892,7 +2893,7 @@
 
 .footerHashtag {
   margin: 0;
-  color: #675c96;
+  color: var(--lavender);
   font-family: "Segoe Print", "Bradley Hand", cursive;
   font-size: clamp(17px, 1.7vw, 27px);
   font-weight: 600;
@@ -2909,16 +2910,16 @@
 .marketplaces {
   overflow: hidden;
   padding: clamp(42px, 4.5vw, 70px) 6vw;
-  border-top: 1px solid rgba(15, 27, 45, 0.08);
+  border-top: 1px solid rgba(9, 23, 36, 0.08);
   background:
     radial-gradient(
       circle at 5% 10%,
-      rgba(219, 161, 58, 0.16),
+      rgba(207, 144, 42, 0.16),
       transparent 30%
     ),
     radial-gradient(
       circle at 82% 80%,
-      rgba(166, 163, 203, 0.2),
+      rgba(150, 131, 177, 0.2),
       transparent 34%
     ),
     linear-gradient(
@@ -2968,11 +2969,11 @@
   max-width: 1360px;
   margin: 0 auto 10px;
   padding: 10px 0;
-  border-top: 1px solid rgba(15, 27, 45, 0.08);
+  border-top: 1px solid rgba(9, 23, 36, 0.08);
 }
 
 .marketplaceGroup + .marketplaceGroup {
-  border-bottom: 1px solid rgba(15, 27, 45, 0.08);
+  border-bottom: 1px solid rgba(9, 23, 36, 0.08);
 }
 
 .marketplaceLabel {
@@ -2989,8 +2990,8 @@
   flex: 0 0 auto;
   place-items: center;
   border-radius: 50%;
-  color: #675c96;
-  background: rgba(166, 163, 203, 0.22);
+  color: var(--lavender);
+  background: rgba(150, 131, 177, 0.22);
   font-size: 10px;
   font-weight: 900;
 }
@@ -3048,7 +3049,7 @@
   flex: 0 0 166px;
   place-items: center;
   padding: 10px;
-  border: 1px solid rgba(15, 27, 45, 0.09);
+  border: 1px solid rgba(9, 23, 36, 0.09);
   border-top: 4px solid var(--terracotta);
   border-radius: 12px;
   color: var(--midnight);
@@ -3063,32 +3064,32 @@
 
 .marketplaceLogo:nth-child(8n + 2) {
   border-top-color: var(--lavender);
-  color: #5f5686;
+  color: var(--lavender);
 }
 
 .marketplaceLogo:nth-child(8n + 3) {
   border-top-color: var(--ochre);
-  color: #93620c;
+  color: var(--ochre);
 }
 
 .marketplaceLogo:nth-child(8n + 4) {
   border-top-color: var(--ochre);
-  color: #9b6a11;
+  color: var(--ochre);
 }
 
 .marketplaceLogo:nth-child(8n + 5) {
-  border-top-color: #b77a55;
-  color: #8a4e2f;
+  border-top-color: var(--terracotta);
+  color: var(--terracotta);
 }
 
 .marketplaceLogo:nth-child(8n + 6) {
   border-top-color: var(--lavender);
-  color: #5f5686;
+  color: var(--lavender);
 }
 
 .marketplaceLogo:nth-child(8n + 7) {
-  border-top-color: #b77a55;
-  color: #8a4e2f;
+  border-top-color: var(--terracotta);
+  color: var(--terracotta);
 }
 
 .marketplaceLogo:nth-child(8n) {
@@ -3121,7 +3122,7 @@
 }
 
 .marketplaceCta a:hover {
-  background: #b9593c;
+  background: var(--terracotta);
   transform: translateY(-2px);
 }
 
@@ -3149,7 +3150,7 @@
   background:
     radial-gradient(
       circle at 8% 18%,
-      rgba(169, 201, 192, 0.24),
+      rgba(159, 190, 182, 0.24),
       transparent 28%
     ),
     linear-gradient(120deg, #fbfdfa, #fffef9 54%, #faf7ff);
@@ -3252,11 +3253,11 @@
   position: relative;
   min-width: 0;
   overflow: hidden;
-  border: 1px solid rgba(15, 27, 45, 0.09);
+  border: 1px solid rgba(9, 23, 36, 0.09);
   border-top: 4px solid var(--product-color);
   border-radius: 12px;
   background: rgba(255, 254, 249, 0.96);
-  box-shadow: 0 16px 34px rgba(15, 27, 45, 0.08);
+  box-shadow: 0 16px 34px rgba(9, 23, 36, 0.08);
   scroll-snap-align: start;
   transition:
     transform 180ms ease,
@@ -3264,14 +3265,14 @@
 }
 
 .productCard:hover {
-  box-shadow: 0 20px 42px rgba(15, 27, 45, 0.13);
+  box-shadow: 0 20px 42px rgba(9, 23, 36, 0.13);
   transform: translateY(-3px);
 }
 
 .productVisual {
   position: relative;
   min-height: 230px;
-  border-bottom: 1px solid rgba(15, 27, 45, 0.08);
+  border-bottom: 1px solid rgba(9, 23, 36, 0.08);
   background-color: #f5f0e8;
   background-image:
     linear-gradient(180deg, transparent 50%, rgba(255, 254, 249, 0.72)),
@@ -3382,7 +3383,7 @@
   border-top: 1px solid var(--warm-sand);
   border-bottom: 1px solid var(--warm-sand);
   background:
-    linear-gradient(90deg, rgba(231, 220, 198, 0.3), transparent 25%), #fffef9;
+    linear-gradient(90deg, rgba(229, 211, 189, 0.3), transparent 25%), #fffef9;
 }
 
 .bestSellers .sectionHeading {
@@ -3404,7 +3405,7 @@
   margin: clamp(42px, 5vw, 80px) auto clamp(68px, 7vw, 116px);
   padding: clamp(24px, 2.8vw, 40px);
   overflow: hidden;
-  border: 1px solid rgba(15, 27, 45, 0.08);
+  border: 1px solid rgba(9, 23, 36, 0.08);
   border-radius: 22px;
   background:
     linear-gradient(
@@ -3413,7 +3414,7 @@
       rgba(255, 247, 229, 0.78)
     ),
     #fbfdfa;
-  box-shadow: 0 18px 44px rgba(15, 27, 45, 0.07);
+  box-shadow: 0 18px 44px rgba(9, 23, 36, 0.07);
 }
 
 .reviewVideoHeading h2 {
@@ -3439,7 +3440,7 @@
   gap: 8px;
   width: fit-content;
   margin-top: 16px;
-  color: #3f4931;
+  color: var(--olive);
   font-family: "Segoe Print", "Bradley Hand", cursive;
   font-size: clamp(24px, 2.5vw, 38px);
   font-weight: 600;
@@ -3460,11 +3461,11 @@
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border: 1px solid rgba(15, 27, 45, 0.12);
+  border: 1px solid rgba(9, 23, 36, 0.12);
   border-radius: 16px;
   background: #f5f8f6 url("/videos/review-lab-demo.webp") center / cover
     no-repeat;
-  box-shadow: 0 16px 34px rgba(15, 27, 45, 0.12);
+  box-shadow: 0 16px 34px rgba(9, 23, 36, 0.12);
 }
 
 .reviewVideoBadge {
@@ -3478,7 +3479,7 @@
   border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 999px;
   color: #fff;
-  background: rgba(15, 27, 45, 0.76);
+  background: rgba(9, 23, 36, 0.76);
   backdrop-filter: blur(8px);
   font-size: 11px;
   font-weight: 800;
@@ -3490,8 +3491,8 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #7ee0bd;
-  box-shadow: 0 0 0 4px rgba(126, 224, 189, 0.18);
+  background: var(--mist-mint);
+  box-shadow: 0 0 0 4px rgba(159, 190, 182, 0.18);
   animation: livePulse 1.2s ease-in-out infinite;
 }
 
@@ -3536,7 +3537,7 @@
 .reviewImprovement article {
   min-height: 190px;
   padding: clamp(22px, 2.4vw, 34px);
-  border: 1px solid rgba(15, 27, 45, 0.08);
+  border: 1px solid rgba(9, 23, 36, 0.08);
   border-radius: 16px;
   background: rgba(255, 254, 249, 0.86);
 }
@@ -3595,7 +3596,7 @@
 
 .reviewImpact strong {
   padding: 12px 0;
-  border-bottom: 1px solid rgba(15, 27, 45, 0.1);
+  border-bottom: 1px solid rgba(9, 23, 36, 0.1);
   color: var(--deep-teal);
   font-size: 15px;
   line-height: 1.35;
@@ -3624,7 +3625,7 @@
   align-items: center;
   margin: clamp(24px, 3vw, 44px) clamp(22px, 3vw, 48px) 0;
   padding: clamp(20px, 2.4vw, 34px);
-  border-top: 1px solid rgba(15, 27, 45, 0.1);
+  border-top: 1px solid rgba(9, 23, 36, 0.1);
   border-radius: 18px;
   background: rgba(255, 254, 249, 0.72);
 }
@@ -3635,18 +3636,18 @@
   min-height: 220px;
   place-items: center;
   overflow: hidden;
-  border: 1px solid rgba(15, 27, 45, 0.1);
+  border: 1px solid rgba(9, 23, 36, 0.1);
   border-radius: 14px;
   background:
-    linear-gradient(120deg, rgba(15, 27, 45, 0.16), rgba(14, 92, 90, 0.08)),
+    linear-gradient(120deg, rgba(9, 23, 36, 0.16), rgba(3, 79, 79, 0.08)),
     url("/images/hero-sleep.png") center / cover;
-  box-shadow: 0 16px 32px rgba(15, 27, 45, 0.1);
+  box-shadow: 0 16px 32px rgba(9, 23, 36, 0.1);
 }
 
 .reviewDemoPoster::after {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 50%, rgba(15, 27, 45, 0.55));
+  background: linear-gradient(180deg, transparent 50%, rgba(9, 23, 36, 0.55));
   content: "";
 }
 
@@ -3660,8 +3661,8 @@
   border: 2px solid rgba(255, 255, 255, 0.88);
   border-radius: 50%;
   color: #fff;
-  background: rgba(14, 92, 90, 0.82);
-  box-shadow: 0 10px 25px rgba(15, 27, 45, 0.24);
+  background: rgba(3, 79, 79, 0.82);
+  box-shadow: 0 10px 25px rgba(9, 23, 36, 0.24);
   font-size: 22px;
 }
 
@@ -3700,7 +3701,7 @@
   padding: 9px 13px;
   border-radius: 999px;
   color: var(--deep-teal);
-  background: rgba(169, 201, 192, 0.28);
+  background: rgba(159, 190, 182, 0.28);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.04em;
@@ -3823,7 +3824,7 @@
     min-height: auto;
     padding: 28px;
     border-right: 0;
-    border-bottom: 1px solid rgba(15, 27, 45, 0.07);
+    border-bottom: 1px solid rgba(9, 23, 36, 0.07);
   }
   .nav > a::after,
   .shopMenu > a::after {
@@ -4095,7 +4096,7 @@
 
   .serviceGrid article:nth-child(n) {
     min-height: 215px;
-    border: 1px solid rgba(15, 27, 45, 0.08);
+    border: 1px solid rgba(9, 23, 36, 0.08);
     border-top: 4px solid var(--service-color);
   }
 
@@ -4114,7 +4115,7 @@
   .manifestoServices {
     padding: 48px 7vw;
     border-right: 0;
-    border-bottom: 1px solid rgba(15, 27, 45, 0.08);
+    border-bottom: 1px solid rgba(9, 23, 36, 0.08);
   }
 
   .simpleManifestoPhoto {
@@ -4220,7 +4221,7 @@
   .serviceGrid article:nth-child(n) {
     min-height: 205px;
     grid-template-columns: 108px minmax(0, 1fr);
-    border: 1px solid rgba(15, 27, 45, 0.08);
+    border: 1px solid rgba(9, 23, 36, 0.08);
     border-top: 4px solid var(--service-color);
   }
 
@@ -4638,4 +4639,19 @@
   .marketplaceTrack {
     animation: none;
   }
+}
+
+.hero.manifestoHero {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 1672 / 545;
+  overflow: hidden;
+  background: #f8f4ec;
+}
+
+.manifestoHeroImage {
+  object-fit: cover;
+  object-position: center;
 }
