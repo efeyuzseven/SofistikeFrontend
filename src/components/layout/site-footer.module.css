@@ -1,0 +1,183 @@
+.siteFooter {
+  z-index: 10;
+  width: 100%;
+  margin-top: auto;
+  color: #fff;
+  background: #091724;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.footerInner {
+  display: flex;
+  width: 100%;
+  max-width: 1500px;
+  min-height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(0.8rem, 2.2vw, 2.25rem);
+  padding: 0 clamp(1rem, 4vw, 3rem);
+  margin: 0 auto;
+  font-size: 0.63rem;
+  font-weight: 650;
+  letter-spacing: 0.035em;
+}
+
+.promise,
+.domain,
+.social,
+.socialIcons,
+.betterLiving {
+  display: flex;
+  align-items: center;
+}
+
+.promise {
+  gap: 0.75rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.promise span {
+  display: grid;
+  gap: 0.12rem;
+}
+
+.promise strong {
+  color: #a68acb;
+  font-size: inherit;
+  font-weight: 800;
+}
+
+.promise > svg {
+  width: 34px;
+  color: #9fbeb6;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.2;
+}
+
+.divider {
+  width: 1px;
+  height: 22px;
+  flex: 0 0 1px;
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.domain {
+  gap: 0.48rem;
+  white-space: nowrap;
+}
+
+.domain svg {
+  width: 18px;
+  height: 18px;
+  color: #bf5d30;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.social {
+  gap: 0.75rem;
+  white-space: nowrap;
+}
+
+.socialIcons {
+  gap: 0.58rem;
+}
+
+.socialIcons > span {
+  display: grid;
+  place-items: center;
+}
+
+.socialIcons svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.socialIcons svg:first-child {
+  fill: none;
+}
+
+.socialIcons .iconDot {
+  fill: currentColor;
+  stroke: none;
+}
+
+.socialIcons .iconCutout {
+  fill: #091724;
+  stroke: #091724;
+}
+
+.betterLiving {
+  gap: 0.55rem;
+  white-space: nowrap;
+}
+
+.betterLiving span {
+  color: #9fbeb6;
+  font-family: "Segoe Script", "Bradley Hand", cursive;
+  font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  transform: rotate(-2deg);
+}
+
+.betterLiving svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+@media (max-width: 900px) {
+  .footerInner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.8rem 2rem;
+    padding-block: 0.85rem;
+  }
+
+  .domain,
+  .social {
+    grid-row: 2;
+  }
+
+  .divider {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .footerInner {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 0.9rem;
+    padding-block: 1.1rem;
+  }
+
+  .promise,
+  .domain,
+  .social,
+  .betterLiving {
+    grid-row: auto;
+  }
+
+  .promise {
+    white-space: normal;
+  }
+}

@@ -4,8 +4,23 @@
   z-index: 50;
   color: #111;
   background: rgba(250, 247, 241, 0.97);
-  border-bottom: 1px solid #dcd5cb;
   backdrop-filter: blur(16px);
+}
+
+.colorRail {
+  height: 5px;
+  background: linear-gradient(
+    to right,
+    #bf5d30 0 11.1111%,
+    #9683b1 11.1111% 22.2222%,
+    #5b613d 22.2222% 33.3333%,
+    #cf902a 33.3333% 44.4444%,
+    #a68acb 44.4444% 55.5556%,
+    #091724 55.5556% 66.6667%,
+    #e5d3bd 66.6667% 77.7778%,
+    #034f4f 77.7778% 88.8889%,
+    #9fbeb6 88.8889% 100%
+  );
 }
 
 .utilityBar {
@@ -15,7 +30,7 @@
   min-height: 29px;
   padding: 0 2.5rem;
   color: white;
-  background: #0a0a0a;
+  background: #091724;
   font-size: 0.65rem;
   font-weight: 650;
   letter-spacing: 0.09em;

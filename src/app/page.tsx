@@ -1,11 +1,6 @@
 export default function Home() {
   return (
-    <main className="relative flex min-h-screen items-center overflow-hidden">
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,var(--brand-orange)_0_16.6%,var(--brand-lavender)_16.6%_33.2%,var(--brand-olive)_33.2%_49.8%,var(--brand-gold)_49.8%_66.4%,var(--brand-navy)_66.4%_83%,var(--brand-teal)_83%_100%)]"
-      />
-
+    <main className="relative flex flex-1 items-center overflow-hidden">
       <section className="mx-auto w-full max-w-3xl px-6 py-20 text-center">
         <p className="text-brand-orange text-sm font-semibold tracking-[0.24em] uppercase">
           Sofistike +XTRA

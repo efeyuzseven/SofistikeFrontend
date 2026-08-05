@@ -197,6 +197,8 @@ export function SiteHeader() {
           </details>
         </div>
       </div>
+
+      <div className={styles.colorRail} aria-hidden="true" />
     </header>
   );
 }
