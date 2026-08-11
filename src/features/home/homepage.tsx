@@ -26,14 +26,6 @@ type ProductItem = {
   color: string;
 };
 
-type ServiceItem = {
-  icon: string;
-  title: string;
-  description: string;
-  color: string;
-  position: string;
-};
-
 const brandPalette = {
   terracotta: "#bf5d30",
   lavender: "#9683b1",
@@ -86,54 +78,57 @@ const featuredProducts: ProductItem[] = [
   },
 ];
 
-const serviceItems: ServiceItem[] = [
+const labProducts: ProductItem[] = [
   {
-    icon: "…",
-    title: "Review Audit™",
-    description:
-      "Rakip ve kategori yorumlarında tekrar eden ihtiyaçları keşfederiz.",
-    color: brandPalette.terracotta,
-    position: "0 0",
-  },
-  {
-    icon: "□",
-    title: "Product Audit™",
-    description:
-      "Mevcut ürünün performansını kullanıcı deneyimiyle birlikte inceleriz.",
+    name: "+XTRA One Konfor Yastığı",
+    category: "Uyku",
+    description: "Ayarlanabilir dolgu ile kişiselleştirilen uyku konforu.",
+    price: "₺999",
+    badge: "En çok dinlenen",
+    image: "/images/hero-sleep.png",
     color: brandPalette.softPurple,
-    position: "50% 0",
   },
   {
-    icon: "◇",
-    title: "Packaging Audit™",
-    description:
-      "Ambalajın kullanım, görünüm ve deneyim tarafını analiz ederiz.",
+    name: "Lavanta Tekstil Spreyi",
+    category: "Ev Tekstili",
+    description: "Kullanıcı yorumlarıyla geliştirilen uzun süreli ferahlık.",
+    price: "₺279",
+    badge: "Yeni",
+    image: "/images/hero-home.png",
+    color: brandPalette.terracotta,
+  },
+  {
+    name: "+XTRA Sakin Aroma",
+    category: "Aroma",
+    description: "Dengeli koku yoğunluğu ve daha yalın bir ev deneyimi.",
+    price: "₺349",
+    badge: "Review Lab",
+    image: "/images/hero-living.png",
     color: brandPalette.olive,
-    position: "100% 0",
   },
   {
-    icon: "◔",
-    title: "Category Audit™",
-    description:
-      "Kategori fırsatlarını ve değişen beklentileri görünür kılarız.",
+    name: "Limon Bulaşık Deterjanı",
+    category: "Mutfak",
+    description: "Kolay durulanan formül ve canlı limon ferahlığı.",
+    price: "₺189",
+    image: "/images/hero-home.png",
     color: brandPalette.ochre,
-    position: "0 100%",
   },
   {
-    icon: "↗",
-    title: "Trend Audit™",
-    description:
-      "Tüketici alışkanlıklarını ve yükselen eğilimleri takip ederiz.",
+    name: "Yumuşak Dokulu Havlu Seti",
+    category: "Banyo",
+    description: "Emicilik ve dokunma hissi kullanıcı notlarıyla yenilendi.",
+    price: "₺699",
+    image: "/images/hero-living.png",
     color: brandPalette.deepTeal,
-    position: "50% 100%",
   },
   {
-    icon: "◎",
-    title: "Review DNA™",
-    description:
-      "Ürünün kullanıcılarla kurduğu bağın ayrıntılı haritasını çıkarırız.",
-    color: brandPalette.mistMint,
-    position: "100% 100%",
+    name: "Evcil Dostlar Bakım Seti",
+    category: "Evcil Dostlar",
+    description: "Günlük bakım için sade, güvenli ve pratik çözümler.",
+    price: "₺429",
+    image: "/images/module-sprite.png",
+    color: brandPalette.terracotta,
   },
 ];
 
@@ -373,15 +368,9 @@ function ProductCard({
 
 export default function HomePage() {
   const [dragging, setDragging] = useState(false);
+  const [heroExpanded, setHeroExpanded] = useState(true);
   const [shopOpen, setShopOpen] = useState(false);
   const moduleRailRef = useRef<HTMLDivElement>(null);
-  const serviceRailRef = useRef<HTMLDivElement>(null);
-  const serviceManualUntil = useRef(0);
-  const serviceDragState = useRef({
-    active: false,
-    startY: 0,
-    startScroll: 0,
-  });
   const dragState = useRef({
     active: false,
     moved: false,
@@ -411,22 +400,6 @@ export default function HomePage() {
     return () => window.clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      const rail = serviceRailRef.current;
-      if (
-        rail &&
-        !serviceDragState.current.active &&
-        Date.now() > serviceManualUntil.current
-      ) {
-        const halfway = rail.scrollHeight / 2;
-        if (rail.scrollTop <= 1) rail.scrollTop += halfway;
-        rail.scrollTop -= 1;
-      }
-    }, 34);
-    return () => window.clearInterval(timer);
-  }, []);
-
   const startModuleDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.pointerType === "mouse" && event.button !== 0) return;
     const rail = moduleRailRef.current;
@@ -453,44 +426,6 @@ export default function HomePage() {
     if (!dragState.current.active) return;
     dragState.current.active = false;
     setDragging(false);
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-  };
-
-  const scrollServices = (direction: 1 | -1) => {
-    const rail = serviceRailRef.current;
-    if (!rail) return;
-    serviceManualUntil.current = Date.now() + 1800;
-    rail.scrollBy({ top: direction * 150, behavior: "smooth" });
-  };
-
-  const startServiceDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
-    serviceManualUntil.current = Date.now() + 2200;
-    if (event.pointerType !== "mouse" || event.button !== 0) return;
-    const rail = serviceRailRef.current;
-    if (!rail) return;
-    event.currentTarget.setPointerCapture(event.pointerId);
-    serviceDragState.current = {
-      active: true,
-      startY: event.clientY,
-      startScroll: rail.scrollTop,
-    };
-  };
-
-  const moveServiceDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const rail = serviceRailRef.current;
-    if (!rail || !serviceDragState.current.active) return;
-    rail.scrollTop =
-      serviceDragState.current.startScroll -
-      (event.clientY - serviceDragState.current.startY);
-    serviceManualUntil.current = Date.now() + 1800;
-  };
-
-  const finishServiceDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!serviceDragState.current.active) return;
-    serviceDragState.current.active = false;
-    serviceManualUntil.current = Date.now() + 1600;
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
@@ -578,7 +513,9 @@ export default function HomePage() {
       </div>
 
       <section
-        className={`${styles.hero} ${styles.manifestoHero}`}
+        className={`${styles.hero} ${styles.manifestoHero} ${
+          heroExpanded ? styles.heroExpanded : styles.heroCollapsed
+        }`}
         id="anasayfa"
       >
         <Image
@@ -589,6 +526,17 @@ export default function HomePage() {
           sizes="100vw"
           src="/images/sofistike-manifesto-hero.webp"
         />
+        <button
+          aria-expanded={heroExpanded}
+          aria-label={
+            heroExpanded ? "Marka görselini kapat" : "Marka görselini aç"
+          }
+          className={styles.heroToggle}
+          onClick={() => setHeroExpanded((value) => !value)}
+          type="button"
+        >
+          <span aria-hidden="true">{heroExpanded ? "↑" : "↓"}</span>
+        </button>
       </section>
 
       <section className={styles.modules} id="moduller">
@@ -661,125 +609,55 @@ export default function HomePage() {
 
       <section className={styles.productShowcase} id="urunler">
         <div className={styles.showcaseIntro}>
-          <span className={styles.eyebrow}>SOFISTIKE +XTRA SEÇKİSİ</span>
-          <h2>Günlük yaşam için düşünülmüş ürünler.</h2>
+          <span className={styles.eyebrow}>POPÜLER ÜRÜNLER</span>
+          <h2>En çok sevilen +XTRA ürünleri.</h2>
           <p>
-            Kokudan tekstile uzanan, gerçek kullanıcı ihtiyaçlarından doğan
-            seçkileri keşfedin.
+            Kullanıcıların en çok incelediği ve günlük yaşamında tercih ettiği
+            ürünleri keşfedin.
           </p>
-          <a className={styles.textButton} href="#innovation-lab">
-            Ürünlerin nasıl geliştiğini gör →
+          <a className={styles.textButton} href="#tum-urunler">
+            Tüm ürün seçkisini gör →
           </a>
         </div>
-        <div className={styles.featuredRail} aria-label="Öne çıkan ürünler">
+        <div className={styles.featuredRail} aria-label="Popüler ürünler">
           {featuredProducts.map((product) => (
             <ProductCard key={product.name} product={product} />
           ))}
         </div>
       </section>
 
-      <section className={styles.innovation} id="innovation-lab">
-        <div className={styles.simpleManifesto}>
-          <div className={styles.manifestoServices}>
-            <div className={styles.manifestoServicesHeading}>
-              <div>
-                <span className={styles.eyebrow}>REVIEW LAB™</span>
-                <h2>Hizmetlerimiz</h2>
-              </div>
-              <span>YAVAŞ OTOMATİK AKIŞ</span>
-            </div>
-
-            <div
-              aria-label="Review Lab hizmetleri"
-              className={styles.serviceFlowViewport}
-              onPointerCancel={finishServiceDrag}
-              onPointerDown={startServiceDrag}
-              onPointerMove={moveServiceDrag}
-              onPointerUp={finishServiceDrag}
-              onTouchStart={() => {
-                serviceManualUntil.current = Date.now() + 2400;
-              }}
-              onWheel={() => {
-                serviceManualUntil.current = Date.now() + 1800;
-              }}
-              ref={serviceRailRef}
-            >
-              <div className={styles.serviceFlowTrack}>
-                {[...serviceItems, ...serviceItems].map((service, index) => (
-                  <article
-                    aria-hidden={index >= serviceItems.length}
-                    className={styles.serviceFlowCard}
-                    key={`${service.title}-${index}`}
-                    style={
-                      {
-                        "--service-color": service.color,
-                      } as CSSProperties
-                    }
-                  >
-                    <div
-                      className={styles.serviceFlowVisual}
-                      aria-hidden="true"
-                      style={{ backgroundPosition: service.position }}
-                    />
-                    <div className={styles.serviceFlowContent}>
-                      <span>
-                        {String((index % serviceItems.length) + 1).padStart(
-                          2,
-                          "0",
-                        )}
-                      </span>
-                      <h3>{service.title}</h3>
-                      <p>{service.description}</p>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-
-            <div className={styles.serviceFlowControls}>
-              <span>Otomatik akış · Kaydırma ve sürükleme açık</span>
-              <button
-                aria-label="Hizmetleri yukarı kaydır"
-                onClick={() => scrollServices(-1)}
-                type="button"
-              >
-                ↑
-              </button>
-              <button
-                aria-label="Hizmetleri aşağı kaydır"
-                onClick={() => scrollServices(1)}
-                type="button"
-              >
-                ↓
-              </button>
-            </div>
-          </div>
-          <div className={styles.simpleManifestoCopy}>
-            <span className={styles.eyebrow}>MANİFESTO</span>
-            <p className={styles.manifestoLeadline}>Biz ürün tasarlamıyoruz.</p>
-            <h2>
-              <span className={styles.manifestoCustomer}>
-                Müşterilerin yaşadığı
-              </span>
-              <br />
-              <span className={styles.manifestoProblem}>problemleri</span>{" "}
-              <strong>yeniden tasarlıyoruz.</strong>
-            </h2>
+      <section
+        className={styles.labProductShowcase}
+        aria-labelledby="lab-products-title"
+        id="tum-urunler"
+      >
+        <div className={styles.labProductHeading}>
+          <div>
+            <span className={styles.eyebrow}>SOFISTIKE +XTRA ÜRÜNLERİ</span>
+            <h2 id="lab-products-title">Yaşamınıza iyi gelen seçkiler.</h2>
             <p>
-              Akıllı fikirler, daha iyi yaşam. Sofistike +XTRA Innovation Lab,
-              gerçek kullanıcı ihtiyaçlarını günlük yaşamı kolaylaştıran
-              çözümlere dönüştürür.
+              Gerçek ihtiyaçlardan geliştirilen ürünleri sade ve kolay
+              incelenebilir bir listede keşfedin.
             </p>
-            <div className={styles.manifestoKeywords}>
-              <span>Dinle</span>
-              <i>·</i>
-              <span>Anla</span>
-              <i>·</i>
-              <span>İyileştir</span>
-            </div>
           </div>
         </div>
+        <div
+          aria-label="Sofistike +XTRA ürünleri"
+          className={styles.labProductList}
+        >
+          {labProducts.map((product) => (
+            <ProductCard compact key={product.name} product={product} />
+          ))}
+        </div>
+        <div className={styles.labProductStatus}>
+          <span>
+            <i aria-hidden="true" /> Tüm seçki tek bakışta
+          </span>
+          <a href="#urunler">Popüler ürünlere dön ↑</a>
+        </div>
+      </section>
 
+      <section className={styles.innovation} id="innovation-lab">
         <div className={styles.labShowcase}>
           <section
             className={styles.insightExamples}
@@ -843,30 +721,6 @@ export default function HomePage() {
             </div>
           </section>
         </div>
-
-        <section
-          className={styles.reviewProductStrip}
-          aria-labelledby="review-products-title"
-        >
-          <div className={styles.reviewVideoHeading}>
-            <span className={styles.eyebrow}>REVIEW LAB DEMOSU</span>
-            <h2 id="review-products-title">
-              Bir yorumun iyileştirmeye dönüşümünü izleyin.
-            </h2>
-            <p className={styles.goodYouSignature}>
-              Good you <span aria-hidden="true">♡</span>
-            </p>
-          </div>
-          <div
-            className={styles.reviewVideoFrame}
-            role="img"
-            aria-label="İmlecin yorum alanına tıklayıp yorum yazdığı ve yorumun iyileştirme kararına dönüştüğü otomatik Review Lab demosu"
-          >
-            <span className={styles.reviewVideoBadge}>
-              <i aria-hidden="true" /> Otomatik demo
-            </span>
-          </div>
-        </section>
 
         <div className={styles.evidence}>
           <div className={styles.simpleMetrics}>
@@ -1001,6 +855,32 @@ export default function HomePage() {
             </a>
           </div>
         </section>
+
+        <div className={styles.simpleManifesto}>
+          <div className={styles.simpleManifestoCopy}>
+            <span className={styles.eyebrow}>MANİFESTO</span>
+            <p className={styles.manifestoLeadline}>Biz ürün tasarlamıyoruz.</p>
+            <h2>
+              <span className={styles.manifestoCustomer}>
+                Müşterilerin yaşadığı
+              </span>
+              <br />
+              <span className={styles.manifestoProblem}>problemleri</span>{" "}
+              <strong>yeniden tasarlıyoruz.</strong>
+            </h2>
+            <p>
+              Sofistike +XTRA Innovation Lab, gerçek kullanıcı ihtiyaçlarını
+              günlük yaşamı kolaylaştıran çözümlere dönüştürür.
+            </p>
+            <div className={styles.manifestoKeywords}>
+              <span>Dinle</span>
+              <i>·</i>
+              <span>Anla</span>
+              <i>·</i>
+              <span>İyileştir</span>
+            </div>
+          </div>
+        </div>
 
         <footer className={styles.combinedFooter}>
           <p className={styles.footerPromise}>
