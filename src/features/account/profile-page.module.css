@@ -1,0 +1,447 @@
+.profilePage {
+  position: relative;
+  width: 100%;
+  min-height: 720px;
+  padding: clamp(2.5rem, 5vw, 5rem) max(1.25rem, calc((100vw - 1240px) / 2));
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 10% 5%,
+      rgba(244, 190, 109, 0.2),
+      transparent 26%
+    ),
+    radial-gradient(
+      circle at 93% 16%,
+      rgba(77, 174, 169, 0.17),
+      transparent 29%
+    ),
+    #faf7f1;
+}
+
+.colorGlow {
+  position: absolute;
+  top: 8rem;
+  right: -8rem;
+  width: 22rem;
+  height: 22rem;
+  background: rgba(157, 123, 205, 0.1);
+  border-radius: 50%;
+  filter: blur(55px);
+  pointer-events: none;
+}
+
+.pageIntro {
+  position: relative;
+  max-width: 720px;
+  margin-bottom: 2rem;
+}
+
+.pageIntro p,
+.cardHeader p {
+  margin: 0 0 0.55rem;
+  color: #7652a8;
+  font-size: 0.68rem;
+  font-weight: 780;
+  letter-spacing: 0.17em;
+}
+
+.pageIntro h1 {
+  margin: 0;
+  color: #091724;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 500;
+  line-height: 1.03;
+  letter-spacing: -0.045em;
+}
+
+.pageIntro > span {
+  display: block;
+  margin-top: 0.9rem;
+  color: #5f625c;
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.accountLayout {
+  position: relative;
+  display: grid;
+  grid-template-columns: 255px minmax(0, 1fr);
+  align-items: start;
+  gap: 1.5rem;
+}
+
+.sidebar,
+.profileCard {
+  background: rgba(255, 253, 249, 0.94);
+  border: 1px solid rgba(216, 206, 194, 0.9);
+  box-shadow: 0 18px 55px rgba(33, 27, 21, 0.08);
+}
+
+.sidebar {
+  padding: 1rem;
+  border-radius: 18px;
+}
+
+.sidebar nav {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.sidebar nav a,
+.sidebar nav button {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0 0.75rem;
+  color: #37342f;
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.72rem;
+  text-align: left;
+  text-decoration: none;
+}
+
+.sidebar nav button:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.sidebar nav button small,
+.mobileNavigation small {
+  color: #746299;
+  font-size: 0.5rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.sidebar .activeNavItem {
+  justify-content: flex-start;
+  color: #fff;
+  background: #7540c2;
+  font-weight: 720;
+}
+
+.activeNavItem svg {
+  width: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.profileCard {
+  position: relative;
+  min-height: 510px;
+  padding: clamp(1.35rem, 3vw, 2.35rem);
+  border-radius: 22px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e7e0d7;
+}
+
+.cardHeader h2 {
+  margin: 0;
+  color: #091724;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.65rem, 3vw, 2.35rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.cardHeader div > span {
+  display: block;
+  max-width: 590px;
+  margin-top: 0.65rem;
+  color: #6b6b65;
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
+.editButton,
+.saveButton,
+.cancelButton {
+  min-height: 43px;
+  padding: 0 1.1rem;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.editButton,
+.saveButton {
+  color: white;
+  background: #7540c2;
+  border: 1px solid #7540c2;
+  box-shadow: 0 10px 25px rgba(117, 64, 194, 0.18);
+}
+
+.editButton:hover,
+.editButton:focus-visible,
+.saveButton:hover,
+.saveButton:focus-visible {
+  background: #6232aa;
+  outline: none;
+}
+
+.editButton:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.profileForm {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.15rem;
+  padding-top: 1.65rem;
+}
+
+.profileForm label {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.profileForm label > span {
+  color: #292722;
+  font-size: 0.72rem;
+  font-weight: 720;
+}
+
+.profileForm input {
+  width: 100%;
+  height: 50px;
+  padding: 0 0.9rem;
+  color: #161616;
+  background: #fff;
+  border: 1px solid #d8d1c8;
+  border-radius: 11px;
+  font: inherit;
+  font-size: 0.82rem;
+  outline: none;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.profileForm input:focus {
+  border-color: #7540c2;
+  box-shadow: 0 0 0 3px rgba(117, 64, 194, 0.12);
+}
+
+.profileForm input:disabled {
+  color: #5f5b56;
+  background: #f5f1eb;
+  cursor: default;
+  opacity: 1;
+}
+
+.profileForm input::placeholder {
+  color: #9a948d;
+}
+
+.fullWidthField {
+  grid-column: 1 / -1;
+}
+
+.profileForm label small {
+  color: #78736d;
+  font-size: 0.63rem;
+  line-height: 1.4;
+}
+
+.formActions {
+  display: flex;
+  grid-column: 1 / -1;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  padding-top: 0.3rem;
+}
+
+.cancelButton {
+  color: #403c38;
+  background: transparent;
+  border: 1px solid #cfc6bc;
+}
+
+.cancelButton:hover,
+.cancelButton:focus-visible {
+  background: #f2ece5;
+  outline: none;
+}
+
+.previewNotice {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 0.9rem;
+  margin-top: 1.25rem;
+  color: #174b42;
+  background: #eef8f4;
+  border: 1px solid #b9d9ce;
+  border-radius: 10px;
+  font-size: 0.72rem;
+}
+
+.previewNotice span {
+  display: grid;
+  width: 21px;
+  height: 21px;
+  flex: 0 0 auto;
+  color: white;
+  background: #197566;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  place-items: center;
+}
+
+.mobileNavigation {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .accountLayout {
+    grid-template-columns: 205px minmax(0, 1fr);
+    gap: 0.85rem;
+  }
+
+  .sidebar {
+    padding: 0.75rem;
+  }
+
+  .sidebar nav a,
+  .sidebar nav button {
+    padding: 0 0.55rem;
+    font-size: 0.66rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .accountLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .mobileNavigation {
+    position: relative;
+    z-index: 2;
+    display: block;
+    background: #fffdf9;
+    border: 1px solid #ded6cc;
+    border-radius: 13px;
+  }
+
+  .mobileNavigation summary {
+    display: flex;
+    min-height: 51px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    color: #fff;
+    background: #7540c2;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 750;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .mobileNavigation summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mobileNavigation div {
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.6rem;
+  }
+
+  .mobileNavigation a,
+  .mobileNavigation button {
+    display: flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0.7rem;
+    color: #35322e;
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 0.72rem;
+    text-decoration: none;
+  }
+
+  .mobileNavigation button:disabled {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 620px) {
+  .profilePage {
+    min-height: 640px;
+    padding: 2.25rem 1rem 3rem;
+  }
+
+  .pageIntro {
+    margin-bottom: 1.4rem;
+  }
+
+  .pageIntro h1 {
+    font-size: 2.35rem;
+  }
+
+  .profileCard {
+    padding: 1.2rem;
+    border-radius: 16px;
+  }
+
+  .cardHeader {
+    flex-direction: column;
+  }
+
+  .editButton {
+    width: 100%;
+  }
+
+  .profileForm {
+    grid-template-columns: 1fr;
+  }
+
+  .fullWidthField,
+  .formActions {
+    grid-column: auto;
+  }
+
+  .formActions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .saveButton {
+    grid-row: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profileForm input {
+    transition: none;
+  }
+}
