@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AccountMenu } from "./account-menu";
 import styles from "./site-header.module.css";
 
 const menuGroups = [
@@ -46,7 +47,11 @@ const menuGroups = [
   },
 ] as const;
 
-const directLinks = ["New Arrivals", "Best Sellers", "Innovation Lab"] as const;
+const directLinks = {
+  "New Arrivals": "/?menu=new-arrivals",
+  "Best Sellers": "/#urunler",
+  "Innovation Lab": "/#innovation-lab",
+} as const;
 
 function toSlug(value: string) {
   return value
@@ -56,7 +61,7 @@ function toSlug(value: string) {
     .replaceAll(/(^-|-$)/g, "");
 }
 
-function HeaderIcon({ name }: { name: "account" | "bag" | "search" }) {
+function HeaderIcon({ name }: { name: "bag" | "search" }) {
   const commonProps = {
     "aria-hidden": true,
     fill: "none",
@@ -72,15 +77,6 @@ function HeaderIcon({ name }: { name: "account" | "bag" | "search" }) {
       <svg {...commonProps}>
         <circle cx="10.8" cy="10.8" r="6.8" />
         <path d="m16 16 4 4" />
-      </svg>
-    );
-  }
-
-  if (name === "account") {
-    return (
-      <svg {...commonProps}>
-        <circle cx="12" cy="8" r="4" />
-        <path d="M4.5 21c.6-4 3.1-6 7.5-6s6.9 2 7.5 6" />
       </svg>
     );
   }
@@ -147,21 +143,27 @@ export function SiteHeader() {
             </div>
           ))}
 
-          {directLinks.map((item) => (
-            <Link key={item} href={`/?menu=${toSlug(item)}`}>
-              {item}
+          {Object.entries(directLinks).map(([label, href]) => (
+            <Link key={label} href={href}>
+              {label}
             </Link>
           ))}
         </nav>
 
         <div className={styles.actions}>
-          <Link href="/?search=open" aria-label="Arama">
+          <Link
+            className={styles.actionLink}
+            href="/?search=open"
+            aria-label="Arama"
+          >
             <HeaderIcon name="search" />
           </Link>
-          <Link href="/?account=open" aria-label="Hesabım">
-            <HeaderIcon name="account" />
-          </Link>
-          <Link href="/?cart=open" aria-label="Sepet">
+          <AccountMenu />
+          <Link
+            className={styles.actionLink}
+            href="/?cart=open"
+            aria-label="Sepet"
+          >
             <HeaderIcon name="bag" />
           </Link>
 
@@ -184,9 +186,9 @@ export function SiteHeader() {
                   </ul>
                 </details>
               ))}
-              {directLinks.map((item) => (
-                <Link key={item} href={`/?menu=${toSlug(item)}`}>
-                  {item}
+              {Object.entries(directLinks).map(([label, href]) => (
+                <Link key={label} href={href}>
+                  {label}
                 </Link>
               ))}
               <div className={styles.mobileUtilityLinks}>

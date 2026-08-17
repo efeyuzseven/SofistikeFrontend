@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type {
   CSSProperties,
   PointerEvent as ReactPointerEvent,
@@ -21,10 +21,33 @@ type ProductItem = {
   category: string;
   description: string;
   price: string;
+  rating: number;
+  reviewCount: number;
+  delivery: string;
+  stock: "Stokta" | "Son 3 ürün" | "Yakında";
   badge?: string;
   image: string;
   color: string;
 };
+
+const heroSlides = [
+  {
+    src: "/images/sofistike-manifesto-hero.webp",
+    alt: "Sofistike +XTRA — Smart Ideas. Better Living marka manifestosu",
+  },
+  {
+    src: "/images/hero-living.png",
+    alt: "Sofistike +XTRA ev yaşam ürünleri koleksiyonu",
+  },
+  {
+    src: "/images/hero-home.png",
+    alt: "Sofistike +XTRA aroma ve ev tekstili ürünleri",
+  },
+  {
+    src: "/images/hero-sleep.png",
+    alt: "Sofistike +XTRA uyku çözümleri",
+  },
+] as const;
 
 const brandPalette = {
   terracotta: "#bf5d30",
@@ -56,6 +79,10 @@ const featuredProducts: ProductItem[] = [
     category: "Aroma",
     description: "Lavanta ve amber notalarıyla evin havasını yumuşatır.",
     price: "₺349",
+    rating: 4.8,
+    reviewCount: 126,
+    delivery: "2 gün",
+    stock: "Stokta",
     badge: "Review Lab",
     image: "/images/hero-home.png",
     color: brandPalette.olive,
@@ -65,6 +92,10 @@ const featuredProducts: ProductItem[] = [
     category: "Uyku",
     description: "Yatak odası tekstillerinde temiz ve rahatlatıcı his.",
     price: "₺279",
+    rating: 4.7,
+    reviewCount: 89,
+    delivery: "1 gün",
+    stock: "Son 3 ürün",
     image: "/images/hero-sleep.png",
     color: brandPalette.softPurple,
   },
@@ -73,6 +104,10 @@ const featuredProducts: ProductItem[] = [
     category: "Mutfak",
     description: "Günlük mutfak düzeni için canlı limon ferahlığı.",
     price: "₺189",
+    rating: 4.6,
+    reviewCount: 74,
+    delivery: "2 gün",
+    stock: "Stokta",
     image: "/images/hero-home.png",
     color: brandPalette.ochre,
   },
@@ -84,6 +119,10 @@ const labProducts: ProductItem[] = [
     category: "Uyku",
     description: "Ayarlanabilir dolgu ile kişiselleştirilen uyku konforu.",
     price: "₺999",
+    rating: 4.9,
+    reviewCount: 214,
+    delivery: "1 gün",
+    stock: "Stokta",
     badge: "En çok dinlenen",
     image: "/images/hero-sleep.png",
     color: brandPalette.softPurple,
@@ -93,6 +132,10 @@ const labProducts: ProductItem[] = [
     category: "Ev Tekstili",
     description: "Kullanıcı yorumlarıyla geliştirilen uzun süreli ferahlık.",
     price: "₺279",
+    rating: 4.8,
+    reviewCount: 156,
+    delivery: "2 gün",
+    stock: "Stokta",
     badge: "Yeni",
     image: "/images/hero-home.png",
     color: brandPalette.terracotta,
@@ -102,6 +145,10 @@ const labProducts: ProductItem[] = [
     category: "Aroma",
     description: "Dengeli koku yoğunluğu ve daha yalın bir ev deneyimi.",
     price: "₺349",
+    rating: 4.7,
+    reviewCount: 126,
+    delivery: "2 gün",
+    stock: "Son 3 ürün",
     badge: "Review Lab",
     image: "/images/hero-living.png",
     color: brandPalette.olive,
@@ -111,6 +158,10 @@ const labProducts: ProductItem[] = [
     category: "Mutfak",
     description: "Kolay durulanan formül ve canlı limon ferahlığı.",
     price: "₺189",
+    rating: 4.6,
+    reviewCount: 74,
+    delivery: "1 gün",
+    stock: "Stokta",
     image: "/images/hero-home.png",
     color: brandPalette.ochre,
   },
@@ -119,6 +170,10 @@ const labProducts: ProductItem[] = [
     category: "Banyo",
     description: "Emicilik ve dokunma hissi kullanıcı notlarıyla yenilendi.",
     price: "₺699",
+    rating: 4.9,
+    reviewCount: 98,
+    delivery: "2 gün",
+    stock: "Stokta",
     image: "/images/hero-living.png",
     color: brandPalette.deepTeal,
   },
@@ -127,6 +182,10 @@ const labProducts: ProductItem[] = [
     category: "Evcil Dostlar",
     description: "Günlük bakım için sade, güvenli ve pratik çözümler.",
     price: "₺429",
+    rating: 4.5,
+    reviewCount: 42,
+    delivery: "Stok yenilenince",
+    stock: "Yakında",
     image: "/images/module-sprite.png",
     color: brandPalette.terracotta,
   },
@@ -333,33 +392,113 @@ function SpriteCard({
   );
 }
 
+function HeartIcon({ filled }: { filled: boolean }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <path
+        d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"
+        fill={filled ? "currentColor" : "none"}
+      />
+    </svg>
+  );
+}
+
 function ProductCard({
   product,
   compact = false,
+  onSelect,
 }: {
   product: ProductItem;
   compact?: boolean;
+  onSelect: (product: ProductItem) => void;
 }) {
+  const [favorite, setFavorite] = useState(false);
+  const [added, setAdded] = useState(false);
+  const feedbackTimerRef = useRef<number | null>(null);
   const style = {
     "--product-image": `url(${product.image})`,
     "--product-color": product.color,
   } as CSSProperties;
+  const available = product.stock !== "Yakında";
+
+  useEffect(() => {
+    return () => {
+      if (feedbackTimerRef.current !== null) {
+        window.clearTimeout(feedbackTimerRef.current);
+      }
+    };
+  }, []);
+
+  const addToCart = () => {
+    if (!available) return;
+    setAdded(true);
+    if (feedbackTimerRef.current !== null) {
+      window.clearTimeout(feedbackTimerRef.current);
+    }
+    feedbackTimerRef.current = window.setTimeout(() => setAdded(false), 1800);
+  };
 
   return (
     <article
       className={`${styles.productCard} ${compact ? styles.productCardCompact : ""}`}
       style={style}
     >
-      <div className={styles.productVisual} aria-hidden="true">
+      <button
+        aria-label={`${product.name} ürün detaylarını aç`}
+        className={styles.productCardLink}
+        onClick={() => onSelect(product)}
+        type="button"
+      />
+      <div className={styles.productVisual}>
         {product.badge && <span>{product.badge}</span>}
       </div>
+      <button
+        aria-label={
+          favorite
+            ? `${product.name} favorilerden çıkar`
+            : `${product.name} favorilere ekle`
+        }
+        aria-pressed={favorite}
+        className={`${styles.favoriteButton} ${favorite ? styles.favoriteButtonActive : ""}`}
+        onClick={() => setFavorite((value) => !value)}
+        type="button"
+      >
+        <HeartIcon filled={favorite} />
+      </button>
       <div className={styles.productInfo}>
         <span className={styles.productCategory}>{product.category}</span>
         <h3>{product.name}</h3>
+        <div
+          aria-label={`${product.rating.toLocaleString("tr-TR", { minimumFractionDigits: 1 })} puan, ${product.reviewCount} yorum`}
+          className={styles.productRating}
+        >
+          <span aria-hidden="true">★</span>
+          <strong>
+            {product.rating.toLocaleString("tr-TR", {
+              minimumFractionDigits: 1,
+            })}
+          </strong>
+          <small>({product.reviewCount} yorum)</small>
+        </div>
         <p>{product.description}</p>
+        <div className={styles.productAvailability}>
+          <span data-stock={product.stock}>
+            <i aria-hidden="true" /> {product.stock}
+          </span>
+        </div>
         <div className={styles.productMeta}>
-          <strong>{product.price}</strong>
-          <a href="#sepet">Sepete ekle</a>
+          <div className={styles.productPrice}>
+            <strong>{product.price}</strong>
+            <small>Tahmini kargoya teslim: {product.delivery}</small>
+          </div>
+          <button
+            className={added ? styles.addedButton : ""}
+            disabled={!available}
+            onClick={addToCart}
+            type="button"
+          >
+            {added ? "Sepete eklendi ✓" : available ? "Sepete ekle" : "Yakında"}
+          </button>
         </div>
       </div>
     </article>
@@ -369,6 +508,10 @@ function ProductCard({
 export default function HomePage() {
   const [dragging, setDragging] = useState(false);
   const [heroExpanded, setHeroExpanded] = useState(true);
+  const [heroSlideIndex, setHeroSlideIndex] = useState(0);
+  const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(
+    null,
+  );
   const [shopOpen, setShopOpen] = useState(false);
   const moduleRailRef = useRef<HTMLDivElement>(null);
   const dragState = useRef({
@@ -378,15 +521,20 @@ export default function HomePage() {
     startScroll: 0,
   });
 
-  const scrollModules = useCallback((direction: 1 | -1) => {
-    const rail = moduleRailRef.current;
-    if (!rail) return;
-    const card = rail.querySelector<HTMLElement>("[data-module-card]");
-    rail.scrollBy({
-      left: direction * ((card?.offsetWidth ?? 420) + 18),
-      behavior: "smooth",
-    });
-  }, []);
+  useEffect(() => {
+    if (!heroExpanded) return;
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (prefersReducedMotion) return;
+
+    const timer = window.setInterval(() => {
+      setHeroSlideIndex((current) => (current + 1) % heroSlides.length);
+    }, 3500);
+
+    return () => window.clearInterval(timer);
+  }, [heroExpanded]);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -399,6 +547,20 @@ export default function HomePage() {
     }, 20);
     return () => window.clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    if (!selectedProduct) return;
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSelectedProduct(null);
+    };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [selectedProduct]);
 
   const startModuleDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.pointerType === "mouse" && event.button !== 0) return;
@@ -518,14 +680,21 @@ export default function HomePage() {
         }`}
         id="anasayfa"
       >
-        <Image
-          alt="Sofistike +XTRA — Smart Ideas. Better Living marka manifestosu"
-          className={styles.manifestoHeroImage}
-          fetchPriority="high"
-          fill
-          sizes="100vw"
-          src="/images/sofistike-manifesto-hero.webp"
-        />
+        {heroSlides.map((slide, index) => (
+          <Image
+            alt={index === heroSlideIndex ? slide.alt : ""}
+            aria-hidden={index !== heroSlideIndex}
+            className={`${styles.manifestoHeroImage} ${
+              index === heroSlideIndex ? styles.manifestoHeroImageActive : ""
+            }`}
+            fetchPriority={index === 0 ? "high" : "auto"}
+            fill
+            key={slide.src}
+            priority={index === 0}
+            sizes="100vw"
+            src={slide.src}
+          />
+        ))}
         <button
           aria-expanded={heroExpanded}
           aria-label={
@@ -549,13 +718,6 @@ export default function HomePage() {
             </p>
           </div>
         </div>
-        <button
-          className={`${styles.railArrow} ${styles.railArrowLeft}`}
-          onClick={() => scrollModules(-1)}
-          aria-label="Önceki modüller"
-        >
-          <Chevron direction="left" />
-        </button>
         <div
           className={`${styles.moduleRail} ${dragging ? styles.dragging : ""}`}
           onPointerDown={startModuleDrag}
@@ -589,28 +751,18 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-        <button
-          className={`${styles.railArrow} ${styles.railArrowRight}`}
-          onClick={() => scrollModules(1)}
-          aria-label="Sonraki modüller"
-        >
-          <Chevron direction="right" />
-        </button>
         <div className={styles.railStatus}>
           <span className={styles.railProgress}>
             <i />
           </span>
-          <span>Kesintisiz otomatik akış</span>
-          <span className={styles.manualHint}>• Manuel sürükleme açık</span>
-          <span className={styles.miniDots}>●　●　●　●　●</span>
-          <span className={styles.autoLive}>AKIŞ AÇIK</span>
+          <span>Kaydırabilirsiniz</span>
         </div>
       </section>
 
       <section className={styles.productShowcase} id="urunler">
         <div className={styles.showcaseIntro}>
           <span className={styles.eyebrow}>POPÜLER ÜRÜNLER</span>
-          <h2>En çok sevilen +XTRA ürünleri.</h2>
+          <h2>En çok sevilen ürünler.</h2>
           <p>
             Kullanıcıların en çok incelediği ve günlük yaşamında tercih ettiği
             ürünleri keşfedin.
@@ -621,7 +773,11 @@ export default function HomePage() {
         </div>
         <div className={styles.featuredRail} aria-label="Popüler ürünler">
           {featuredProducts.map((product) => (
-            <ProductCard key={product.name} product={product} />
+            <ProductCard
+              key={product.name}
+              onSelect={setSelectedProduct}
+              product={product}
+            />
           ))}
         </div>
       </section>
@@ -633,11 +789,11 @@ export default function HomePage() {
       >
         <div className={styles.labProductHeading}>
           <div>
-            <span className={styles.eyebrow}>SOFISTIKE +XTRA ÜRÜNLERİ</span>
-            <h2 id="lab-products-title">Yaşamınıza iyi gelen seçkiler.</h2>
+            <span className={styles.eyebrow}>TÜM ÜRÜNLER</span>
+            <h2 id="lab-products-title">Tüm ürünleri keşfedin.</h2>
             <p>
-              Gerçek ihtiyaçlardan geliştirilen ürünleri sade ve kolay
-              incelenebilir bir listede keşfedin.
+              Evinizin farklı alanları için geliştirilen Sofistike ürünlerini
+              sade ve kolay incelenebilir bir listede keşfedin.
             </p>
           </div>
         </div>
@@ -646,7 +802,12 @@ export default function HomePage() {
           className={styles.labProductList}
         >
           {labProducts.map((product) => (
-            <ProductCard compact key={product.name} product={product} />
+            <ProductCard
+              compact
+              key={product.name}
+              onSelect={setSelectedProduct}
+              product={product}
+            />
           ))}
         </div>
         <div className={styles.labProductStatus}>
@@ -656,6 +817,64 @@ export default function HomePage() {
           <a href="#urunler">Popüler ürünlere dön ↑</a>
         </div>
       </section>
+
+      {selectedProduct ? (
+        <div
+          className={styles.productQuickViewBackdrop}
+          onMouseDown={(event) => {
+            if (event.currentTarget === event.target) setSelectedProduct(null);
+          }}
+          role="presentation"
+        >
+          <section
+            aria-labelledby="quick-view-title"
+            aria-modal="true"
+            className={styles.productQuickView}
+            role="dialog"
+            style={
+              {
+                "--product-image": `url(${selectedProduct.image})`,
+                "--product-color": selectedProduct.color,
+              } as CSSProperties
+            }
+          >
+            <button
+              aria-label="Ürün detaylarını kapat"
+              className={styles.productQuickViewClose}
+              onClick={() => setSelectedProduct(null)}
+              type="button"
+            >
+              ×
+            </button>
+            <div className={styles.productQuickViewVisual} aria-hidden="true" />
+            <div className={styles.productQuickViewCopy}>
+              <span>{selectedProduct.category}</span>
+              <h2 id="quick-view-title">{selectedProduct.name}</h2>
+              <div className={styles.productQuickViewRating}>
+                <b aria-hidden="true">★</b>
+                {selectedProduct.rating.toLocaleString("tr-TR", {
+                  minimumFractionDigits: 1,
+                })}{" "}
+                <small>({selectedProduct.reviewCount} yorum)</small>
+              </div>
+              <p>{selectedProduct.description}</p>
+              <strong>{selectedProduct.price}</strong>
+              <ul>
+                <li>{selectedProduct.stock}</li>
+                <li>Tahmini kargoya teslim: {selectedProduct.delivery}</li>
+              </ul>
+              <button
+                disabled={selectedProduct.stock === "Yakında"}
+                type="button"
+              >
+                {selectedProduct.stock === "Yakında"
+                  ? "Yakında"
+                  : "Sepete ekle"}
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
 
       <section className={styles.innovation} id="innovation-lab">
         <div className={styles.labShowcase}>

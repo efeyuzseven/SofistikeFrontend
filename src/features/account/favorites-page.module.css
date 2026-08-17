@@ -1,0 +1,718 @@
+.favoritesPage {
+  position: relative;
+  width: 100%;
+  min-height: 760px;
+  padding: clamp(2.5rem, 5vw, 5rem) max(1.25rem, calc((100vw - 1240px) / 2));
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 9% 3%, rgba(244, 190, 109, 0.2), transparent 25%),
+    radial-gradient(
+      circle at 94% 12%,
+      rgba(77, 174, 169, 0.16),
+      transparent 29%
+    ),
+    #faf7f1;
+}
+
+.colorGlow {
+  position: absolute;
+  top: 8rem;
+  right: -8rem;
+  width: 24rem;
+  height: 24rem;
+  background: rgba(157, 123, 205, 0.1);
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+.pageIntro {
+  position: relative;
+  max-width: 760px;
+  margin-bottom: 2rem;
+}
+
+.pageIntro > p,
+.panelHeader p,
+.recommendationHeader p {
+  margin: 0 0 0.5rem;
+  color: #7652a8;
+  font-size: 0.68rem;
+  font-weight: 780;
+  letter-spacing: 0.17em;
+}
+
+.pageIntro > div {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.pageIntro h1 {
+  margin: 0;
+  color: #091724;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 500;
+  line-height: 1.03;
+  letter-spacing: -0.045em;
+}
+
+.pageIntro div > span {
+  padding: 0.35rem 0.65rem;
+  margin-bottom: 0.28rem;
+  color: #6832ad;
+  background: #eee6f8;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 750;
+}
+
+.pageIntro > small {
+  display: block;
+  margin-top: 0.9rem;
+  color: #5f625c;
+  font-size: 0.95rem;
+}
+
+.accountLayout {
+  position: relative;
+  display: grid;
+  grid-template-columns: 255px minmax(0, 1fr);
+  align-items: start;
+  gap: 1.5rem;
+}
+
+.contentColumn {
+  display: grid;
+  min-width: 0;
+  gap: 1.5rem;
+}
+
+.favoritesPanel,
+.recommendations {
+  background: rgba(255, 253, 249, 0.95);
+  border: 1px solid rgba(216, 206, 194, 0.9);
+  border-radius: 22px;
+  box-shadow: 0 18px 55px rgba(33, 27, 21, 0.08);
+}
+
+.favoritesPanel {
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.panelHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+}
+
+.panelHeader h2,
+.recommendationHeader h2 {
+  margin: 0;
+  color: #091724;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.55rem, 2.8vw, 2.2rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.panelHeader > span {
+  padding: 0.35rem 0.6rem;
+  color: #746299;
+  background: #f2ecf9;
+  border-radius: 999px;
+  font-size: 0.58rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: minmax(210px, 1fr) minmax(145px, auto) minmax(
+      145px,
+      auto
+    );
+  gap: 0.65rem;
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  background: #f5f0e9;
+  border: 1px solid #e2d9ce;
+  border-radius: 14px;
+}
+
+.controls label,
+.filterMenu {
+  min-width: 0;
+}
+
+.controls input,
+.filterTrigger {
+  width: 100%;
+  height: 43px;
+  color: #24221f;
+  background: #fff;
+  border: 1px solid #d8d0c7;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 0.7rem;
+  outline: none;
+}
+
+.controls input:focus,
+.filterTrigger:focus-visible {
+  border-color: #7540c2;
+  box-shadow: 0 0 0 3px rgba(117, 64, 194, 0.1);
+}
+
+.filterMenu {
+  position: relative;
+}
+
+.filterTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0 0.75rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.filterChevron {
+  color: #7540c2;
+  font-size: 1rem;
+  line-height: 1;
+  transition: transform 180ms ease;
+}
+
+.filterTrigger[aria-expanded="true"] .filterChevron {
+  transform: rotate(180deg);
+}
+
+.filterOptions {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  right: 0;
+  left: 0;
+  z-index: 20;
+  display: grid;
+  gap: 0.2rem;
+  min-width: 185px;
+  padding: 0.4rem;
+  overflow: hidden;
+  background: #fffdf9;
+  border: 1px solid #d9cde7;
+  border-radius: 12px;
+  box-shadow: 0 16px 35px rgba(40, 26, 56, 0.16);
+}
+
+.filterOptions button {
+  display: flex;
+  width: 100%;
+  min-height: 38px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.65rem;
+  color: #24221f;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.68rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.filterOptions button:hover,
+.filterOptions button:focus-visible {
+  color: #6534a5;
+  background: #f1eaf9;
+  outline: none;
+}
+
+.filterOptions button.selectedOption {
+  color: #fff;
+  background: #7540c2;
+  font-weight: 740;
+}
+
+.filterOptions button.selectedOption:hover,
+.filterOptions button.selectedOption:focus-visible {
+  color: #fff;
+  background: #6934b2;
+}
+
+.searchField {
+  position: relative;
+}
+
+.searchField svg {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  z-index: 1;
+  width: 17px;
+  fill: none;
+  stroke: #706a64;
+  stroke-linecap: round;
+  stroke-width: 1.7;
+  transform: translateY(-50%);
+}
+
+.searchField input {
+  padding: 0 0.75rem 0 2.25rem;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.favoriteCard {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #ded7ce;
+  border-top: 3px solid var(--accent);
+  border-radius: 14px;
+  box-shadow: 0 10px 26px rgba(31, 24, 18, 0.07);
+}
+
+.productImage {
+  position: relative;
+  height: 145px;
+  overflow: hidden;
+  background: #eee9e2;
+}
+
+.productImage img,
+.recommendationImage img {
+  object-fit: cover;
+}
+
+.heartButton {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  color: #df246d;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid #e5d8dd;
+  border-radius: 50%;
+  box-shadow: 0 7px 18px rgba(38, 25, 29, 0.14);
+  cursor: pointer;
+  place-items: center;
+}
+
+.heartButton:hover,
+.heartButton:focus-visible {
+  color: white;
+  background: #df246d;
+  outline: none;
+}
+
+.heartButton svg {
+  width: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.productInfo {
+  display: grid;
+  gap: 0.42rem;
+  padding: 0.9rem;
+}
+
+.category {
+  color: var(--accent);
+  font-size: 0.56rem;
+  font-weight: 780;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.productInfo h3,
+.recommendationCard h3 {
+  margin: 0;
+  color: #111d27;
+  font-size: 0.86rem;
+  line-height: 1.25;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 0.28rem;
+  font-size: 0.62rem;
+}
+
+.rating > span {
+  color: #cf902a;
+}
+
+.rating small {
+  color: #77716a;
+}
+
+.stock {
+  width: fit-content;
+  color: #08665c;
+  font-size: 0.58rem;
+  font-weight: 760;
+}
+
+.price {
+  margin-top: 0.2rem;
+  color: #091724;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.25rem;
+}
+
+.delivery {
+  color: #77716a;
+  font-size: 0.56rem;
+  line-height: 1.35;
+}
+
+.cartButton {
+  min-height: 37px;
+  margin-top: 0.3rem;
+  color: #075754;
+  background: transparent;
+  border: 1px solid #19706b;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.66rem;
+  font-weight: 760;
+  cursor: pointer;
+}
+
+.cartButton:hover,
+.cartButton:focus-visible {
+  color: white;
+  background: #075754;
+  outline: none;
+}
+
+.emptyState,
+.noResults {
+  display: grid;
+  min-height: 310px;
+  align-content: center;
+  justify-items: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.emptyState > span {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  color: #8b72b0;
+  background: #f1ebf8;
+  border-radius: 50%;
+  place-items: center;
+}
+
+.emptyState svg {
+  width: 25px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+
+.emptyState h3,
+.noResults h3 {
+  margin: 1rem 0 0.4rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+
+.emptyState p {
+  max-width: 440px;
+  margin: 0 0 1rem;
+  color: #6c6862;
+  font-size: 0.75rem;
+  line-height: 1.55;
+}
+
+.emptyState a,
+.noResults button {
+  padding: 0.75rem 1rem;
+  color: white;
+  background: #7540c2;
+  border: 0;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 750;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.recommendations {
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  background:
+    linear-gradient(
+      125deg,
+      rgba(252, 244, 233, 0.96),
+      rgba(236, 247, 244, 0.92)
+    ),
+    #fff;
+}
+
+.recommendationHeader > span {
+  display: block;
+  margin: 0.55rem 0 1.25rem;
+  color: #686962;
+  font-size: 0.74rem;
+}
+
+.recommendationGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.recommendationCard {
+  display: grid;
+  grid-template-columns: 95px minmax(0, 1fr);
+  min-width: 0;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ddd7cf;
+  border-radius: 13px;
+}
+
+.recommendationImage {
+  position: relative;
+  min-height: 145px;
+}
+
+.recommendationCard > div:last-child {
+  display: grid;
+  align-content: center;
+  gap: 0.45rem;
+  padding: 0.75rem;
+}
+
+.recommendationCard div > span {
+  color: #7a57a5;
+  font-size: 0.53rem;
+  font-weight: 730;
+}
+
+.recommendationCard div > strong {
+  color: #091724;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+}
+
+.recommendationCard button {
+  display: flex;
+  min-height: 32px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  color: #7137b7;
+  background: #f1eaf9;
+  border: 0;
+  border-radius: 7px;
+  font: inherit;
+  font-size: 0.58rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.recommendationCard button:hover,
+.recommendationCard button:focus-visible {
+  color: white;
+  background: #7540c2;
+  outline: none;
+}
+
+.recommendationCard button svg {
+  width: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+}
+
+.allAdded {
+  padding: 1.2rem;
+  color: #126258;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.notice {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 70;
+  display: flex;
+  max-width: min(420px, calc(100vw - 2rem));
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  color: #fff;
+  background: #091724;
+  border-radius: 11px;
+  box-shadow: 0 15px 38px rgba(9, 23, 36, 0.26);
+  font-size: 0.68rem;
+}
+
+.notice button {
+  padding: 0;
+  color: #e8c8ff;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 760;
+  text-decoration: underline;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+  .productGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .recommendationGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .accountLayout {
+    grid-template-columns: 205px minmax(0, 1fr);
+    gap: 0.85rem;
+  }
+
+  .controls {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .searchField {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .favoritesPage {
+    padding: 2.25rem 1rem 3.5rem;
+  }
+
+  .pageIntro {
+    margin-bottom: 1.4rem;
+  }
+
+  .pageIntro h1 {
+    font-size: 2.35rem;
+  }
+
+  .accountLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .favoritesPanel,
+  .recommendations {
+    padding: 1rem;
+    border-radius: 16px;
+  }
+
+  .panelHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .controls {
+    grid-template-columns: 1fr 1fr;
+    padding: 0.75rem;
+  }
+
+  .productGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+  }
+
+  .productImage {
+    height: 110px;
+  }
+
+  .productInfo {
+    padding: 0.7rem;
+  }
+
+  .productInfo h3 {
+    min-height: 2.5em;
+    font-size: 0.76rem;
+  }
+
+  .rating small,
+  .delivery {
+    font-size: 0.5rem;
+  }
+
+  .recommendationCard {
+    grid-template-columns: 88px minmax(0, 1fr);
+  }
+
+  .notice {
+    right: 0.75rem;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 420px) {
+  .controls {
+    grid-template-columns: 1fr;
+  }
+
+  .searchField {
+    grid-column: auto;
+  }
+
+  .productGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .productImage {
+    height: 155px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filterChevron {
+    transition: none;
+  }
+}
