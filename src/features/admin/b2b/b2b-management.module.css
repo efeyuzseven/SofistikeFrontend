@@ -1,0 +1,330 @@
+.mainTabs {
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+  margin-top: 18px;
+  padding-bottom: 2px;
+  overflow-x: auto;
+  border-bottom: 1px solid #e8e3dc;
+}
+
+.mainTabs button {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: none;
+  padding: 0 14px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #6d747d;
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.mainTabs b {
+  min-width: 23px;
+  padding: 3px 6px;
+  border-radius: 12px;
+  background: #f0ece6;
+  color: #68717c;
+  font-size: 10px;
+}
+
+.mainTabs .activeMainTab {
+  border-bottom-color: #f42168;
+  color: #08233d;
+}
+
+.mainTabs .activeMainTab b {
+  background: #fdeaf1;
+  color: #d51d5b;
+}
+
+.contact {
+  min-width: 145px;
+  display: grid;
+  gap: 3px;
+}
+
+.contact small {
+  color: #767d85;
+  font-size: 10px;
+}
+
+.solutionList {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.solutionList span,
+.solutionList b {
+  padding: 4px 7px;
+  border-radius: 12px;
+  background: #f1eef8;
+  color: #60439b;
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.solutionList b {
+  background: #f0ece6;
+  color: #626b75;
+}
+
+.summaryCell {
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.statusBadge {
+  display: inline-block;
+  min-width: 82px;
+  padding: 5px 9px;
+  border-radius: 20px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.statusYeniBasvuru,
+.statusYeniTalep {
+  background: #e9f2fa;
+  color: #287dc1;
+}
+
+.statusInceleniyor,
+.statusGorusmePlanlandi,
+.statusTeklifHazirlaniyor,
+.statusYuklendi {
+  background: #fff0e3;
+  color: #b25a10;
+}
+
+.statusBelgeBekleniyor,
+.statusTeklifGonderildi,
+.statusAskida {
+  background: #f0eafd;
+  color: #6d35df;
+}
+
+.statusOnaylandi,
+.statusAktif,
+.statusTamamlandi {
+  background: #e8f5ec;
+  color: #168447;
+}
+
+.statusReddedildi,
+.statusIptalEdildi {
+  background: #fbe9e7;
+  color: #c94842;
+}
+
+.statusPasif {
+  background: #eceff1;
+  color: #65707a;
+}
+
+.documentGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.documentGrid article {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #e7e2db;
+  border-radius: 8px;
+  background: #fdfbf8;
+  color: #253449;
+  font-size: 12px;
+}
+
+.documentGrid span {
+  flex: none;
+  padding: 4px 7px;
+  border-radius: 12px;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.documentYüklendi,
+.documentOnaylandı {
+  background: #e8f5ec;
+  color: #168447;
+}
+
+.documentEksik {
+  background: #fbe9e7;
+  color: #c94842;
+}
+
+.documentİnceleniyor {
+  background: #fff0e3;
+  color: #b25a10;
+}
+
+.historyTitle {
+  margin-top: 10px !important;
+}
+
+.timeline {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.timeline li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 10px;
+  padding-bottom: 16px;
+}
+
+.timeline li::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  bottom: 0;
+  left: 5px;
+  width: 1px;
+  background: #ded8d0;
+}
+
+.timeline li:last-child::before {
+  display: none;
+}
+
+.timeline li > span {
+  width: 11px;
+  height: 11px;
+  margin-top: 3px;
+  border: 3px solid #fdeaf1;
+  border-radius: 50%;
+  background: #f42168;
+}
+
+.timeline p {
+  margin: 4px 0;
+  color: #5f6873;
+  font-size: 11px;
+}
+
+.timeline small {
+  color: #81868d;
+  font-size: 10px;
+}
+
+.reviewBody {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+
+.reviewCompany,
+.managerCurrent {
+  display: grid;
+  gap: 5px;
+  padding: 13px;
+  border: 1px solid #e7e2db;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.reviewCompany strong,
+.managerCurrent strong {
+  color: #08233d;
+}
+
+.reviewCompany span,
+.managerCurrent span {
+  color: #737b84;
+  font-size: 11px;
+}
+
+.decisionTabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.decisionTabs button {
+  min-height: 40px;
+  padding: 6px;
+  border: 1px solid #dcd6ce;
+  border-radius: 8px;
+  background: #fff;
+  color: #58626e;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.decisionTabs .selectedDecision {
+  border-color: #f42168;
+  background: #fdeaf1;
+  color: #c61c56;
+}
+
+.approvalNotice {
+  margin: 0;
+  padding: 11px;
+  border-radius: 8px;
+  background: #e8f5ec;
+  color: #176c3c;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.documentPicker {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid #e1dbd3;
+  border-radius: 8px;
+}
+
+.documentPicker legend {
+  padding: 0 5px;
+  color: #59636e;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.documentPicker label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #45515f;
+  font-size: 11px;
+}
+
+.mainTabs button:focus-visible,
+.decisionTabs button:focus-visible,
+.documentPicker input:focus-visible {
+  outline: 2px solid #f42168;
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .documentGrid,
+  .documentPicker,
+  .decisionTabs {
+    grid-template-columns: 1fr;
+  }
+}
