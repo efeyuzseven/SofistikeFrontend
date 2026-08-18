@@ -3,6 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useCart } from "@/features/cart/cart-context";
+import type {
+  BackendFavoriteItem,
+  BackendPagedFavorites,
+  FavoriteApiError,
+} from "@/lib/favorites";
 import { AccountNavigation } from "./account-navigation";
 import styles from "./favorites-page.module.css";
 
@@ -13,7 +19,7 @@ type FavoriteProduct = {
   price: number;
   rating: number;
   reviews: number;
-  stock: "Stokta" | "Son 3 ürün";
+  stock: "Stokta" | "Son 3 ürün" | "Yakında";
   delivery: string;
   image: string;
   color: string;
@@ -27,7 +33,7 @@ type SelectOption = {
 
 const initialFavorites: FavoriteProduct[] = [
   {
-    id: "calm-aroma",
+    id: "05527362-1d91-4b47-a598-bf334c4996bb",
     name: "+XTRA Sakin Aroma",
     category: "Aroma",
     price: 349,
@@ -39,7 +45,7 @@ const initialFavorites: FavoriteProduct[] = [
     color: "#5b613d",
   },
   {
-    id: "comfort-pillow",
+    id: "3310ead5-3459-43a7-982f-6446cc5af664",
     name: "+XTRA One Konfor Yastığı",
     category: "Uyku",
     price: 999,
@@ -51,7 +57,7 @@ const initialFavorites: FavoriteProduct[] = [
     color: "#9683b1",
   },
   {
-    id: "lavender-spray",
+    id: "8529ea32-50b0-476f-aeb0-8656aa5b0d3f",
     name: "Lavanta Tekstil Spreyi",
     category: "Ev Tekstili",
     price: 279,
@@ -63,7 +69,7 @@ const initialFavorites: FavoriteProduct[] = [
     color: "#bf5d30",
   },
   {
-    id: "lemon-detergent",
+    id: "cf6d1497-6c1f-4997-84ae-713410eed466",
     name: "Limon Bulaşık Deterjanı",
     category: "Mutfak",
     price: 189,
@@ -75,7 +81,7 @@ const initialFavorites: FavoriteProduct[] = [
     color: "#cf902a",
   },
   {
-    id: "towel-set",
+    id: "6170d843-e8b7-4a6e-943f-d0c5fc6b69c3",
     name: "Yumuşak Dokulu Havlu Seti",
     category: "Banyo",
     price: 699,
@@ -87,27 +93,27 @@ const initialFavorites: FavoriteProduct[] = [
     color: "#034f4f",
   },
   {
-    id: "textile-refresher",
-    name: "Yastık & Tekstil Ferahlatıcı",
-    category: "Uyku",
-    price: 279,
-    rating: 4.7,
-    reviews: 89,
-    stock: "Stokta",
-    delivery: "1 gün",
-    image: "/images/hero-sleep.png",
-    color: "#a68acb",
+    id: "0439679f-f073-4663-81d8-b96a395e40ab",
+    name: "Evcil Dostlar Bakım Seti",
+    category: "Evcil Dostlar",
+    price: 429,
+    rating: 4.5,
+    reviews: 42,
+    stock: "Yakında",
+    delivery: "Stok yenilenince",
+    image: "/images/module-sprite.png",
+    color: "#bf5d30",
   },
 ];
 
 const initialRecommendations: FavoriteProduct[] = [
   {
-    id: "linen-mist",
-    name: "Soft Linen Oda Kokusu",
+    id: "05527362-1d91-4b47-a598-bf334c4996bb",
+    name: "+XTRA Sakin Aroma",
     category: "Aroma",
-    price: 319,
-    rating: 4.7,
-    reviews: 63,
+    price: 349,
+    rating: 4.8,
+    reviews: 126,
     stock: "Stokta",
     delivery: "2 gün",
     image: "/images/hero-living.png",
@@ -115,23 +121,23 @@ const initialRecommendations: FavoriteProduct[] = [
     reason: "Aroma favorilerinize benzer",
   },
   {
-    id: "sleep-set",
-    name: "Rahat Uyku Tekstil Seti",
-    category: "Uyku",
-    price: 849,
+    id: "8529ea32-50b0-476f-aeb0-8656aa5b0d3f",
+    name: "Lavanta Tekstil Spreyi",
+    category: "Ev Tekstili",
+    price: 279,
     rating: 4.8,
-    reviews: 112,
+    reviews: 156,
     stock: "Stokta",
     delivery: "2 gün",
-    image: "/images/hero-sleep.png",
-    color: "#9683b1",
-    reason: "Uyku seçimlerinizi tamamlar",
+    image: "/images/hero-home.png",
+    color: "#bf5d30",
+    reason: "Ev tekstili seçimlerinizi tamamlar",
   },
   {
-    id: "kitchen-care",
-    name: "Mutfak Bakım Başlangıç Seti",
+    id: "cf6d1497-6c1f-4997-84ae-713410eed466",
+    name: "Limon Bulaşık Deterjanı",
     category: "Mutfak",
-    price: 429,
+    price: 189,
     rating: 4.6,
     reviews: 51,
     stock: "Stokta",
@@ -141,6 +147,52 @@ const initialRecommendations: FavoriteProduct[] = [
     reason: "Mutfak ilginize göre",
   },
 ];
+
+const categoryColors: Record<string, string> = {
+  Aroma: "#5b613d",
+  Uyku: "#9683b1",
+  "Ev Tekstili": "#bf5d30",
+  Mutfak: "#cf902a",
+  Banyo: "#034f4f",
+  "Evcil Dostlar": "#bf5d30",
+};
+
+function mapFavoriteItem(item: BackendFavoriteItem): FavoriteProduct {
+  const product = item.product;
+  const presentation = initialFavorites.find(
+    (candidate) => candidate.id === product.id,
+  );
+  const category = product.categories[0]?.name ?? "Sofistike";
+  const stock =
+    product.stock.status === "OutOfStock"
+      ? "Yakında"
+      : product.stock.status === "LowStock"
+        ? "Son 3 ürün"
+        : "Stokta";
+
+  return {
+    id: product.id,
+    name: product.name,
+    category,
+    price: product.price?.effectivePrice ?? 0,
+    rating: presentation?.rating ?? 0,
+    reviews: presentation?.reviews ?? 0,
+    stock,
+    delivery: presentation?.delivery ?? "2 gün",
+    image:
+      product.primaryImage?.url ??
+      presentation?.image ??
+      "/images/hero-home.png",
+    color: categoryColors[category] ?? "#7540c2",
+  };
+}
+
+async function readApiError(response: Response) {
+  const payload = (await response
+    .json()
+    .catch(() => null)) as FavoriteApiError | null;
+  return payload?.message ?? "İşlem şu anda tamamlanamadı.";
+}
 
 function HeartIcon({ filled = true }: { filled?: boolean }) {
   return (
@@ -224,8 +276,9 @@ function FavoriteCard({
   onRemove,
 }: {
   product: FavoriteProduct;
-  onRemove: (product: FavoriteProduct) => void;
+  onRemove: (product: FavoriteProduct) => Promise<void>;
 }) {
+  const { addItem } = useCart();
   const [added, setAdded] = useState(false);
 
   return (
@@ -244,7 +297,7 @@ function FavoriteCard({
           type="button"
           className={styles.heartButton}
           aria-label={`${product.name} favorilerden kaldır`}
-          onClick={() => onRemove(product)}
+          onClick={() => void onRemove(product)}
         >
           <HeartIcon />
         </button>
@@ -268,12 +321,27 @@ function FavoriteCard({
         <button
           type="button"
           className={styles.cartButton}
+          disabled={product.stock === "Yakında"}
           onClick={() => {
+            if (product.stock === "Yakında") return;
+            addItem({
+              id: product.id,
+              name: product.name,
+              category: product.category,
+              price: product.price,
+              image: product.image,
+              color: product.color,
+              delivery: product.delivery,
+            });
             setAdded(true);
             window.setTimeout(() => setAdded(false), 1800);
           }}
         >
-          {added ? "Sepete eklendi ✓" : "Sepete Ekle"}
+          {added
+            ? "Sepete eklendi ✓"
+            : product.stock === "Yakında"
+              ? "Yakında"
+              : "Sepete Ekle"}
         </button>
       </div>
     </article>
@@ -281,10 +349,13 @@ function FavoriteCard({
 }
 
 export function FavoritesPage() {
-  const [favorites, setFavorites] = useState(initialFavorites);
+  const [favorites, setFavorites] = useState<FavoriteProduct[]>([]);
   const [recommendations, setRecommendations] = useState(
     initialRecommendations,
   );
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [reloadVersion, setReloadVersion] = useState(0);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("Tümü");
   const [sort, setSort] = useState("recent");
@@ -297,6 +368,57 @@ export function FavoritesPage() {
   const [notice, setNotice] = useState("");
   const noticeTimer = useRef<number | null>(null);
   const controlsRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadFavorites() {
+      setLoading(true);
+      setLoadError("");
+
+      try {
+        const response = await fetch(
+          "/api/account/favorites?page=1&pageSize=100",
+          { cache: "no-store" },
+        );
+        if (response.status === 401) {
+          window.location.assign("/login");
+          return;
+        }
+        if (!response.ok) {
+          throw new Error(await readApiError(response));
+        }
+
+        const payload = (await response.json()) as BackendPagedFavorites;
+        if (cancelled) return;
+        const loadedFavorites = payload.items.map(mapFavoriteItem);
+        const favoriteIds = new Set(
+          loadedFavorites.map((product) => product.id),
+        );
+        setFavorites(loadedFavorites);
+        setRecommendations(
+          initialRecommendations.filter(
+            (product) => !favoriteIds.has(product.id),
+          ),
+        );
+      } catch (error) {
+        if (!cancelled) {
+          setLoadError(
+            error instanceof Error
+              ? error.message
+              : "Favorileriniz yüklenemedi.",
+          );
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void loadFavorites();
+    return () => {
+      cancelled = true;
+    };
+  }, [reloadVersion]);
 
   useEffect(() => {
     return () => {
@@ -328,11 +450,8 @@ export function FavoritesPage() {
   }, [openFilter]);
 
   const categories = useMemo(
-    () => [
-      "Tümü",
-      ...new Set(initialFavorites.map((product) => product.category)),
-    ],
-    [],
+    () => ["Tümü", ...new Set(favorites.map((product) => product.category))],
+    [favorites],
   );
 
   const categoryOptions = categories.map((item) => ({
@@ -366,28 +485,88 @@ export function FavoritesPage() {
   function showNotice(message: string) {
     setNotice(message);
     if (noticeTimer.current !== null) window.clearTimeout(noticeTimer.current);
-    noticeTimer.current = window.setTimeout(() => setNotice(""), 3000);
+    noticeTimer.current = window.setTimeout(() => {
+      setNotice("");
+      setRemovedProduct(null);
+    }, 3000);
   }
 
-  function removeFavorite(product: FavoriteProduct) {
+  async function removeFavorite(product: FavoriteProduct) {
     setFavorites((current) => current.filter((item) => item.id !== product.id));
     setRemovedProduct(product);
-    showNotice(`${product.name} favorilerinizden kaldırıldı.`);
+    try {
+      const response = await fetch(`/api/account/favorites/${product.id}`, {
+        method: "DELETE",
+      });
+      if (response.status === 401) {
+        window.location.assign("/login");
+        return;
+      }
+      if (!response.ok) throw new Error(await readApiError(response));
+      showNotice(`${product.name} favorilerinizden kaldırıldı.`);
+    } catch (error) {
+      setFavorites((current) => [product, ...current]);
+      setRemovedProduct(null);
+      showNotice(
+        error instanceof Error
+          ? error.message
+          : "Ürün favorilerden kaldırılamadı.",
+      );
+    }
   }
 
-  function undoRemove() {
+  async function undoRemove() {
     if (!removedProduct) return;
-    setFavorites((current) => [removedProduct, ...current]);
-    setRemovedProduct(null);
-    setNotice("");
+    try {
+      const response = await fetch(
+        `/api/account/favorites/${removedProduct.id}`,
+        { method: "POST" },
+      );
+      if (response.status === 401) {
+        window.location.assign("/login");
+        return;
+      }
+      if (!response.ok) throw new Error(await readApiError(response));
+      const favorite = mapFavoriteItem(
+        (await response.json()) as BackendFavoriteItem,
+      );
+      setFavorites((current) => [favorite, ...current]);
+      setRemovedProduct(null);
+      setNotice("");
+    } catch (error) {
+      showNotice(
+        error instanceof Error ? error.message : "Favori geri alınamadı.",
+      );
+    }
   }
 
-  function addRecommendation(product: FavoriteProduct) {
-    setFavorites((current) => [product, ...current]);
-    setRecommendations((current) =>
-      current.filter((item) => item.id !== product.id),
-    );
-    showNotice(`${product.name} favorilerinize eklendi.`);
+  async function addRecommendation(product: FavoriteProduct) {
+    setRemovedProduct(null);
+    try {
+      const response = await fetch(`/api/account/favorites/${product.id}`, {
+        method: "POST",
+      });
+      if (response.status === 401) {
+        window.location.assign("/login");
+        return;
+      }
+      if (!response.ok) throw new Error(await readApiError(response));
+      const favorite = mapFavoriteItem(
+        (await response.json()) as BackendFavoriteItem,
+      );
+      setFavorites((current) => [
+        favorite,
+        ...current.filter((item) => item.id !== favorite.id),
+      ]);
+      setRecommendations((current) =>
+        current.filter((item) => item.id !== product.id),
+      );
+      showNotice(`${favorite.name} favorilerinize eklendi.`);
+    } catch (error) {
+      showNotice(
+        error instanceof Error ? error.message : "Ürün favorilere eklenemedi.",
+      );
+    }
   }
 
   return (
@@ -415,7 +594,7 @@ export function FavoritesPage() {
                 <p>FAVORİ SEÇKİNİZ</p>
                 <h2 id="favorites-title">Favorilerinize hızlıca ulaşın.</h2>
               </div>
-              <span>Tasarım önizlemesi</span>
+              <span>Güncel favoriler</span>
             </div>
 
             <div className={styles.controls} ref={controlsRef}>
@@ -461,7 +640,21 @@ export function FavoritesPage() {
               />
             </div>
 
-            {favorites.length === 0 ? (
+            {loading ? (
+              <div className={styles.noResults} role="status">
+                <h3>Favorileriniz yükleniyor…</h3>
+              </div>
+            ) : loadError ? (
+              <div className={styles.noResults} role="alert">
+                <h3>{loadError}</h3>
+                <button
+                  type="button"
+                  onClick={() => setReloadVersion((current) => current + 1)}
+                >
+                  Tekrar Dene
+                </button>
+              </div>
+            ) : favorites.length === 0 ? (
               <div className={styles.emptyState}>
                 <span aria-hidden="true">
                   <HeartIcon filled={false} />
@@ -531,7 +724,7 @@ export function FavoritesPage() {
                       <strong>₺{product.price}</strong>
                       <button
                         type="button"
-                        onClick={() => addRecommendation(product)}
+                        onClick={() => void addRecommendation(product)}
                       >
                         <HeartIcon filled={false} /> Favorilere Ekle
                       </button>
@@ -552,7 +745,7 @@ export function FavoritesPage() {
         <div className={styles.notice} role="status">
           <span>{notice}</span>
           {removedProduct ? (
-            <button type="button" onClick={undoRemove}>
+            <button type="button" onClick={() => void undoRemove()}>
               Geri Al
             </button>
           ) : null}

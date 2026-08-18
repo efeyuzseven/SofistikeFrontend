@@ -17,6 +17,15 @@ export type BackendLoginResponse = {
   expiresIn: number;
 };
 
+export type AccountProfile = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string | null;
+  phoneNumber: string | null;
+  role: string;
+};
+
 export function getBackendErrorMessage(payload: unknown) {
   if (
     payload &&

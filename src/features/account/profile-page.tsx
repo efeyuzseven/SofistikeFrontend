@@ -2,52 +2,67 @@
 
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import type { AccountProfile } from "@/lib/auth";
 import { AccountNavigation } from "./account-navigation";
 import styles from "./profile-page.module.css";
-
-type CurrentUser = {
-  email: string;
-  firstName: string;
-};
 
 type ProfileForm = {
   firstName: string;
   lastName: string;
   email: string;
-  phone: string;
+  phoneNumber: string;
 };
 
 const emptyProfile: ProfileForm = {
   firstName: "",
   lastName: "",
   email: "",
-  phone: "",
+  phoneNumber: "",
 };
 
 export function ProfilePage() {
+  const router = useRouter();
   const [profile, setProfile] = useState<ProfileForm>(emptyProfile);
   const [draft, setDraft] = useState<ProfileForm>(emptyProfile);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let active = true;
 
-    fetch("/api/auth/me", { cache: "no-store" })
+    fetch("/api/account/profile", { cache: "no-store" })
       .then(async (response) => {
-        if (!response.ok) return null;
-        return (await response.json()) as { user: CurrentUser };
+        if (response.status === 401) {
+          router.replace("/login");
+          return null;
+        }
+
+        const payload = (await response.json().catch(() => null)) as
+          { profile: AccountProfile } | { message?: string } | null;
+
+        if (!response.ok) {
+          throw new Error(
+            payload && "message" in payload && payload.message
+              ? payload.message
+              : "Profil bilgileri yüklenemedi.",
+          );
+        }
+
+        return payload && "profile" in payload ? payload.profile : null;
       })
-      .then((payload) => {
+      .then((currentUser) => {
         if (!active) return;
 
-        if (payload?.user) {
+        if (currentUser) {
           const currentProfile = {
-            firstName: payload.user.firstName,
-            lastName: "",
-            email: payload.user.email,
-            phone: "",
+            firstName: currentUser.firstName,
+            lastName: currentUser.lastName ?? "",
+            email: currentUser.email,
+            phoneNumber: currentUser.phoneNumber ?? "",
           };
           setProfile(currentProfile);
           setDraft(currentProfile);
@@ -55,33 +70,94 @@ export function ProfilePage() {
 
         setLoading(false);
       })
-      .catch(() => {
-        if (active) setLoading(false);
+      .catch((requestError: unknown) => {
+        if (active) {
+          setError(
+            requestError instanceof Error
+              ? requestError.message
+              : "Profil bilgileri yüklenemedi.",
+          );
+          setLoading(false);
+        }
       });
 
     return () => {
       active = false;
     };
-  }, []);
+  }, [router]);
 
   function startEditing() {
     setDraft(profile);
     setNotice("");
+    setError("");
     setEditing(true);
   }
 
   function cancelEditing() {
     setDraft(profile);
     setNotice("");
+    setError("");
     setEditing(false);
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setProfile(draft);
-    setEditing(false);
-    setNotice("Tasarım önizlemesi: Bilgiler veritabanına kaydedilmedi.");
-    window.setTimeout(() => setNotice(""), 3000);
+    setSaving(true);
+    setNotice("");
+    setError("");
+
+    try {
+      const response = await fetch("/api/account/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: draft.firstName,
+          lastName: draft.lastName || null,
+          phoneNumber: draft.phoneNumber || null,
+        }),
+      });
+      const payload = (await response.json().catch(() => null)) as
+        { profile: AccountProfile } | { message?: string } | null;
+
+      if (response.status === 401) {
+        router.replace("/login");
+        return;
+      }
+
+      if (!response.ok || !payload || !("profile" in payload)) {
+        throw new Error(
+          payload && "message" in payload && payload.message
+            ? payload.message
+            : "Bilgiler kaydedilemedi.",
+        );
+      }
+
+      const updatedProfile = {
+        firstName: payload.profile.firstName,
+        lastName: payload.profile.lastName ?? "",
+        email: payload.profile.email,
+        phoneNumber: payload.profile.phoneNumber ?? "",
+      };
+
+      setProfile(updatedProfile);
+      setDraft(updatedProfile);
+      setEditing(false);
+      setNotice("Bilgileriniz başarıyla kaydedildi.");
+      window.dispatchEvent(
+        new CustomEvent("sofistike-profile-updated", {
+          detail: { firstName: updatedProfile.firstName },
+        }),
+      );
+      window.setTimeout(() => setNotice(""), 3000);
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : "Bilgiler kaydedilemedi.",
+      );
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -106,8 +182,8 @@ export function ProfilePage() {
               <p>KİŞİSEL BİLGİLER</p>
               <h2 id="profile-title">Profilinizi güncel tutun.</h2>
               <span>
-                Bu ekran şimdilik tasarım önizlemesidir; bilgiler kalıcı olarak
-                saklanmaz.
+                Kaydettiğiniz bilgiler hesabınızda saklanır ve sonraki
+                ziyaretlerinizde güncel haliyle gösterilir.
               </span>
             </div>
 
@@ -166,7 +242,7 @@ export function ProfilePage() {
                 aria-describedby="email-help"
               />
               <small id="email-help">
-                Giriş yaptığınız e-posta adresi bu önizlemede değiştirilemez.
+                Giriş yaptığınız e-posta adresi bu ekrandan değiştirilemez.
               </small>
             </label>
 
@@ -175,13 +251,13 @@ export function ProfilePage() {
               <input
                 name="phone"
                 type="tel"
-                value={draft.phone}
+                value={draft.phoneNumber}
                 disabled={!editing}
                 placeholder={editing ? "+90 5xx xxx xx xx" : "Belirtilmedi"}
                 onChange={(event) =>
                   setDraft((current) => ({
                     ...current,
-                    phone: event.target.value,
+                    phoneNumber: event.target.value,
                   }))
                 }
               />
@@ -192,12 +268,17 @@ export function ProfilePage() {
                 <button
                   type="button"
                   className={styles.cancelButton}
+                  disabled={saving}
                   onClick={cancelEditing}
                 >
                   Vazgeç
                 </button>
-                <button type="submit" className={styles.saveButton}>
-                  Değişiklikleri Kaydet
+                <button
+                  type="submit"
+                  className={styles.saveButton}
+                  disabled={saving}
+                >
+                  {saving ? "Kaydediliyor…" : "Değişiklikleri Kaydet"}
                 </button>
               </div>
             ) : null}
@@ -207,6 +288,12 @@ export function ProfilePage() {
             <div className={styles.previewNotice} role="status">
               <span aria-hidden="true">✓</span>
               {notice}
+            </div>
+          ) : null}
+
+          {error ? (
+            <div className={styles.errorNotice} role="alert">
+              {error}
             </div>
           ) : null}
         </section>

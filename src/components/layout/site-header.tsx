@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CartLink } from "@/features/cart/cart-link";
 import { AccountMenu } from "./account-menu";
 import styles from "./site-header.module.css";
 
@@ -61,7 +62,7 @@ function toSlug(value: string) {
     .replaceAll(/(^-|-$)/g, "");
 }
 
-function HeaderIcon({ name }: { name: "bag" | "search" }) {
+function HeaderIcon({ name }: { name: "search" }) {
   const commonProps = {
     "aria-hidden": true,
     fill: "none",
@@ -81,12 +82,7 @@ function HeaderIcon({ name }: { name: "bag" | "search" }) {
     );
   }
 
-  return (
-    <svg {...commonProps}>
-      <path d="M6 8h12l1 13H5L6 8Z" />
-      <path d="M9 9V6a3 3 0 0 1 6 0v3" />
-    </svg>
-  );
+  return null;
 }
 
 function BrandMark() {
@@ -159,13 +155,7 @@ export function SiteHeader() {
             <HeaderIcon name="search" />
           </Link>
           <AccountMenu />
-          <Link
-            className={styles.actionLink}
-            href="/?cart=open"
-            aria-label="Sepet"
-          >
-            <HeaderIcon name="bag" />
-          </Link>
+          <CartLink />
 
           <details className={styles.mobileMenu}>
             <summary aria-label="Menüyü aç veya kapat">

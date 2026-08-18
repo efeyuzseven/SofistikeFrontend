@@ -337,6 +337,51 @@
   text-align: center;
 }
 
+.registerForm {
+  gap: 17px;
+  margin-top: clamp(24px, 3.5vh, 36px);
+}
+
+.nameGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.formGroup {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.formGroup > label {
+  font-size: 0.9rem;
+  font-weight: 580;
+}
+
+.registerForm .inputField {
+  min-height: 58px;
+}
+
+.registerForm .inputField input {
+  height: 56px;
+}
+
+.passwordHint {
+  margin: -4px 0 0;
+  color: #6d6a66;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.registerForm .formError {
+  margin: 0;
+}
+
+.registerForm .signup {
+  margin-top: 3px;
+}
+
 @media (max-width: 1050px) {
   .loginPage {
     grid-template-columns: minmax(330px, 0.78fr) minmax(500px, 1.22fr);
@@ -469,6 +514,10 @@
     align-items: flex-start;
     flex-direction: column;
     gap: 14px;
+  }
+
+  .nameGrid {
+    grid-template-columns: 1fr;
   }
 }
 

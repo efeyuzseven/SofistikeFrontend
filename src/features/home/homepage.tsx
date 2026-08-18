@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { useCart } from "@/features/cart/cart-context";
+import type { BackendPagedFavorites } from "@/lib/favorites";
 import type {
   CSSProperties,
   PointerEvent as ReactPointerEvent,
@@ -17,6 +19,7 @@ type ModuleItem = {
 };
 
 type ProductItem = {
+  id: string;
   name: string;
   category: string;
   description: string;
@@ -29,6 +32,18 @@ type ProductItem = {
   image: string;
   color: string;
 };
+
+function toCartProduct(product: ProductItem) {
+  return {
+    id: product.id,
+    name: product.name,
+    category: product.category,
+    price: Number(product.price.replaceAll(/[^0-9]/g, "")),
+    image: product.image,
+    color: product.color,
+    delivery: product.delivery,
+  };
+}
 
 const heroSlides = [
   {
@@ -75,6 +90,7 @@ const modules: ModuleItem[] = [
 
 const featuredProducts: ProductItem[] = [
   {
+    id: "05527362-1d91-4b47-a598-bf334c4996bb",
     name: "+XTRA Sakin Aroma",
     category: "Aroma",
     description: "Lavanta ve amber notalarıyla evin havasını yumuşatır.",
@@ -88,18 +104,20 @@ const featuredProducts: ProductItem[] = [
     color: brandPalette.olive,
   },
   {
-    name: "Yastık & Tekstil Ferahlatıcı",
-    category: "Uyku",
-    description: "Yatak odası tekstillerinde temiz ve rahatlatıcı his.",
+    id: "8529ea32-50b0-476f-aeb0-8656aa5b0d3f",
+    name: "Lavanta Tekstil Spreyi",
+    category: "Ev Tekstili",
+    description: "Kullanıcı yorumlarıyla geliştirilen uzun süreli ferahlık.",
     price: "₺279",
-    rating: 4.7,
-    reviewCount: 89,
-    delivery: "1 gün",
-    stock: "Son 3 ürün",
-    image: "/images/hero-sleep.png",
-    color: brandPalette.softPurple,
+    rating: 4.8,
+    reviewCount: 156,
+    delivery: "2 gün",
+    stock: "Stokta",
+    image: "/images/hero-home.png",
+    color: brandPalette.terracotta,
   },
   {
+    id: "cf6d1497-6c1f-4997-84ae-713410eed466",
     name: "Bulaşık Deterjanı Limon",
     category: "Mutfak",
     description: "Günlük mutfak düzeni için canlı limon ferahlığı.",
@@ -115,6 +133,7 @@ const featuredProducts: ProductItem[] = [
 
 const labProducts: ProductItem[] = [
   {
+    id: "3310ead5-3459-43a7-982f-6446cc5af664",
     name: "+XTRA One Konfor Yastığı",
     category: "Uyku",
     description: "Ayarlanabilir dolgu ile kişiselleştirilen uyku konforu.",
@@ -128,6 +147,7 @@ const labProducts: ProductItem[] = [
     color: brandPalette.softPurple,
   },
   {
+    id: "8529ea32-50b0-476f-aeb0-8656aa5b0d3f",
     name: "Lavanta Tekstil Spreyi",
     category: "Ev Tekstili",
     description: "Kullanıcı yorumlarıyla geliştirilen uzun süreli ferahlık.",
@@ -141,6 +161,7 @@ const labProducts: ProductItem[] = [
     color: brandPalette.terracotta,
   },
   {
+    id: "05527362-1d91-4b47-a598-bf334c4996bb",
     name: "+XTRA Sakin Aroma",
     category: "Aroma",
     description: "Dengeli koku yoğunluğu ve daha yalın bir ev deneyimi.",
@@ -154,6 +175,7 @@ const labProducts: ProductItem[] = [
     color: brandPalette.olive,
   },
   {
+    id: "cf6d1497-6c1f-4997-84ae-713410eed466",
     name: "Limon Bulaşık Deterjanı",
     category: "Mutfak",
     description: "Kolay durulanan formül ve canlı limon ferahlığı.",
@@ -166,6 +188,7 @@ const labProducts: ProductItem[] = [
     color: brandPalette.ochre,
   },
   {
+    id: "6170d843-e8b7-4a6e-943f-d0c5fc6b69c3",
     name: "Yumuşak Dokulu Havlu Seti",
     category: "Banyo",
     description: "Emicilik ve dokunma hissi kullanıcı notlarıyla yenilendi.",
@@ -178,6 +201,7 @@ const labProducts: ProductItem[] = [
     color: brandPalette.deepTeal,
   },
   {
+    id: "0439679f-f073-4663-81d8-b96a395e40ab",
     name: "Evcil Dostlar Bakım Seti",
     category: "Evcil Dostlar",
     description: "Günlük bakım için sade, güvenli ve pratik çözümler.",
@@ -406,13 +430,19 @@ function HeartIcon({ filled }: { filled: boolean }) {
 function ProductCard({
   product,
   compact = false,
+  favorite,
+  favoriteBusy,
   onSelect,
+  onToggleFavorite,
 }: {
   product: ProductItem;
   compact?: boolean;
+  favorite: boolean;
+  favoriteBusy: boolean;
   onSelect: (product: ProductItem) => void;
+  onToggleFavorite: (product: ProductItem) => Promise<void>;
 }) {
-  const [favorite, setFavorite] = useState(false);
+  const { addItem } = useCart();
   const [added, setAdded] = useState(false);
   const feedbackTimerRef = useRef<number | null>(null);
   const style = {
@@ -431,6 +461,7 @@ function ProductCard({
 
   const addToCart = () => {
     if (!available) return;
+    addItem(toCartProduct(product));
     setAdded(true);
     if (feedbackTimerRef.current !== null) {
       window.clearTimeout(feedbackTimerRef.current);
@@ -460,7 +491,8 @@ function ProductCard({
         }
         aria-pressed={favorite}
         className={`${styles.favoriteButton} ${favorite ? styles.favoriteButtonActive : ""}`}
-        onClick={() => setFavorite((value) => !value)}
+        disabled={favoriteBusy}
+        onClick={() => void onToggleFavorite(product)}
         type="button"
       >
         <HeartIcon filled={favorite} />
@@ -506,6 +538,7 @@ function ProductCard({
 }
 
 export default function HomePage() {
+  const { addItem } = useCart();
   const [dragging, setDragging] = useState(false);
   const [heroExpanded, setHeroExpanded] = useState(true);
   const [heroSlideIndex, setHeroSlideIndex] = useState(0);
@@ -513,6 +546,10 @@ export default function HomePage() {
     null,
   );
   const [shopOpen, setShopOpen] = useState(false);
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
+  const [pendingFavoriteIds, setPendingFavoriteIds] = useState<Set<string>>(
+    new Set(),
+  );
   const moduleRailRef = useRef<HTMLDivElement>(null);
   const dragState = useRef({
     active: false,
@@ -520,6 +557,31 @@ export default function HomePage() {
     startX: 0,
     startScroll: 0,
   });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadFavorites() {
+      try {
+        const response = await fetch(
+          "/api/account/favorites?page=1&pageSize=100",
+          { cache: "no-store" },
+        );
+        if (!response.ok) return;
+        const payload = (await response.json()) as BackendPagedFavorites;
+        if (!cancelled) {
+          setFavoriteIds(new Set(payload.items.map((item) => item.product.id)));
+        }
+      } catch {
+        // Favori servisi erişilemezse ürün keşfi çalışmaya devam eder.
+      }
+    }
+
+    void loadFavorites();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!heroExpanded) return;
@@ -592,6 +654,52 @@ export default function HomePage() {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
   };
+
+  async function toggleFavorite(product: ProductItem) {
+    if (pendingFavoriteIds.has(product.id)) return;
+
+    const wasFavorite = favoriteIds.has(product.id);
+    setFavoriteIds((current) => {
+      const next = new Set(current);
+      if (wasFavorite) next.delete(product.id);
+      else next.add(product.id);
+      return next;
+    });
+    setPendingFavoriteIds((current) => new Set(current).add(product.id));
+
+    try {
+      const response = await fetch(`/api/account/favorites/${product.id}`, {
+        method: wasFavorite ? "DELETE" : "POST",
+      });
+      if (response.status === 401) {
+        setFavoriteIds((current) => {
+          const next = new Set(current);
+          if (wasFavorite) next.add(product.id);
+          else next.delete(product.id);
+          return next;
+        });
+        const redirect = `${window.location.pathname}${window.location.hash}`;
+        window.location.assign(
+          `/login?redirect=${encodeURIComponent(redirect)}`,
+        );
+        return;
+      }
+      if (!response.ok) throw new Error("Favorite request failed");
+    } catch {
+      setFavoriteIds((current) => {
+        const next = new Set(current);
+        if (wasFavorite) next.add(product.id);
+        else next.delete(product.id);
+        return next;
+      });
+    } finally {
+      setPendingFavoriteIds((current) => {
+        const next = new Set(current);
+        next.delete(product.id);
+        return next;
+      });
+    }
+  }
 
   return (
     <main className={styles.page}>
@@ -774,8 +882,11 @@ export default function HomePage() {
         <div className={styles.featuredRail} aria-label="Popüler ürünler">
           {featuredProducts.map((product) => (
             <ProductCard
+              favorite={favoriteIds.has(product.id)}
+              favoriteBusy={pendingFavoriteIds.has(product.id)}
               key={product.name}
               onSelect={setSelectedProduct}
+              onToggleFavorite={toggleFavorite}
               product={product}
             />
           ))}
@@ -804,8 +915,11 @@ export default function HomePage() {
           {labProducts.map((product) => (
             <ProductCard
               compact
+              favorite={favoriteIds.has(product.id)}
+              favoriteBusy={pendingFavoriteIds.has(product.id)}
               key={product.name}
               onSelect={setSelectedProduct}
+              onToggleFavorite={toggleFavorite}
               product={product}
             />
           ))}
@@ -865,6 +979,10 @@ export default function HomePage() {
               </ul>
               <button
                 disabled={selectedProduct.stock === "Yakında"}
+                onClick={() => {
+                  addItem(toCartProduct(selectedProduct));
+                  setSelectedProduct(null);
+                }}
                 type="button"
               >
                 {selectedProduct.stock === "Yakında"

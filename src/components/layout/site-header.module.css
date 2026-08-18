@@ -23,6 +23,24 @@
   );
 }
 
+.cartCount {
+  position: absolute;
+  top: 4px;
+  right: 1px;
+  display: grid;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  color: white;
+  background: #7641bd;
+  border: 2px solid #faf7f1;
+  border-radius: 999px;
+  font-size: 0.52rem;
+  font-weight: 800;
+  line-height: 1;
+  place-items: center;
+}
+
 .utilityBar {
   display: flex;
   align-items: center;
@@ -227,6 +245,7 @@
 }
 
 .actionLink {
+  position: relative;
   display: grid;
   width: 33px;
   height: 33px;

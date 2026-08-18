@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { CartProvider } from "@/features/cart/cart-context";
+import { CartDrawer } from "@/features/cart/cart-drawer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,9 +37,14 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <SiteHeader />
-        {children}
-        <SiteFooter />
+        <CartProvider>
+          <SiteHeader />
+          {children}
+          <SiteFooter />
+          <Suspense fallback={null}>
+            <CartDrawer />
+          </Suspense>
+        </CartProvider>
       </body>
     </html>
   );

@@ -70,6 +70,30 @@ export function AccountMenu() {
     };
   }, []);
 
+  useEffect(() => {
+    function handleProfileUpdated(event: Event) {
+      const detail = (event as CustomEvent<{ firstName?: string }>).detail;
+      if (!detail?.firstName) return;
+
+      setUser((currentUser) =>
+        currentUser
+          ? {
+              ...currentUser,
+              firstName: detail.firstName ?? currentUser.firstName,
+            }
+          : currentUser,
+      );
+    }
+
+    window.addEventListener("sofistike-profile-updated", handleProfileUpdated);
+    return () => {
+      window.removeEventListener(
+        "sofistike-profile-updated",
+        handleProfileUpdated,
+      );
+    };
+  }, []);
+
   async function handleLogout() {
     setLoggingOut(true);
 

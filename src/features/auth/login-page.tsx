@@ -193,7 +193,7 @@ export function LoginPage() {
             </button>
 
             <p className={styles.signup}>
-              Hesabınız yok mu? <Link href="/?account=register">Kayıt Ol</Link>
+              Hesabınız yok mu? <Link href="/kayit">Kayıt Ol</Link>
             </p>
           </form>
         </div>
