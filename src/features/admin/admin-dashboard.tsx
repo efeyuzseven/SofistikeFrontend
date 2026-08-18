@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Icon, type IconName } from "./admin-icons";
 import { SalesChart } from "./sales-chart";
@@ -300,9 +301,9 @@ export function AdminDashboard() {
                   <small>talep artışı</small>
                 </span>
               </div>
-              <button type="button" onClick={() => placeholder("İçgörü")}>
+              <Link className={styles.insightLink} href="/admin/insights">
                 İçgörüyü İncele <span>→</span>
-              </button>
+              </Link>
             </div>
           </div>
         </section>

@@ -699,16 +699,19 @@
 .insightStats small {
   font-size: 9px;
 }
-.insightInfo button {
+.insightLink {
+  display: inline-block;
   float: right;
   margin-top: 9px;
   padding: 6px 11px;
   border: 1px solid #ddd8d2;
   border-radius: 6px;
   background: #fff;
+  color: inherit;
   cursor: pointer;
+  text-decoration: none;
 }
-.insightInfo button span {
+.insightLink span {
   margin-left: 18px;
 }
 .ordersCard {

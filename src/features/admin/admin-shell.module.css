@@ -245,6 +245,58 @@
   font: inherit;
   white-space: nowrap;
 }
+.profileMenuWrap {
+  position: relative;
+  flex: none;
+}
+.profileDropdown {
+  position: absolute;
+  z-index: 80;
+  top: calc(100% + 9px);
+  right: 0;
+  display: grid;
+  width: 190px;
+  padding: 6px;
+  border: 1px solid #ded8d1;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 14px 38px #071a2e2e;
+}
+.profileDropdown a,
+.profileDropdown button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 39px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #273545;
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.profileDropdown a:hover,
+.profileDropdown button:hover,
+.profileDropdown a:focus-visible,
+.profileDropdown button:focus-visible {
+  background: #f6f2ed;
+  outline: none;
+}
+.profileDropdown svg {
+  width: 17px;
+  height: 17px;
+}
+.profileDropdown .logoutItem {
+  color: #b72f37;
+}
+.profile[aria-expanded="true"] > svg {
+  transform: rotate(270deg);
+}
 .profile > svg {
   width: 12px;
   transform: rotate(90deg);

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { AdminConfirmModal } from "./admin-confirm-modal";
 import { Icon, type IconName } from "./admin-icons";
 import styles from "./admin-shell.module.css";
 
@@ -95,6 +96,10 @@ const routeHeadings = {
     description:
       "Panel yapılandırmasını, yönetici erişimlerini ve güvenlik tercihlerini yönetin.",
   },
+  profile: {
+    title: "Profilim",
+    description: "Hesap bilgilerinizi ve tercihlerinizi yönetin",
+  },
 };
 
 function getCurrentAdminDate() {
@@ -114,7 +119,10 @@ function getCurrentAdminDate() {
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [notice, setNotice] = useState("");
+  const profileMenuRef = useRef<HTMLDivElement>(null);
   const isProducts = pathname.startsWith("/admin/products");
   const isInventory = pathname.startsWith("/admin/inventory");
   const isOrders = pathname.startsWith("/admin/orders");
@@ -126,6 +134,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const isInsights = pathname.startsWith("/admin/insights");
   const isReports = pathname.startsWith("/admin/reports");
   const isSettings = pathname.startsWith("/admin/settings");
+  const isProfile = pathname.startsWith("/admin/profile");
   const isManagementPage =
     isProducts ||
     isInventory ||
@@ -137,30 +146,33 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     isIntegrations ||
     isInsights ||
     isReports ||
-    isSettings;
-  const heading = isSettings
-    ? routeHeadings.settings
-    : isReports
-      ? routeHeadings.reports
-      : isInsights
-        ? routeHeadings.insights
-        : isIntegrations
-          ? routeHeadings.integrations
-          : isB2B
-            ? routeHeadings.b2b
-            : isCustomers
-              ? routeHeadings.customers
-              : isRefunds
-                ? routeHeadings.refunds
-                : isPayments
-                  ? routeHeadings.payments
-                  : isOrders
-                    ? routeHeadings.orders
-                    : isInventory
-                      ? routeHeadings.inventory
-                      : isProducts
-                        ? routeHeadings.products
-                        : routeHeadings.dashboard;
+    isSettings ||
+    isProfile;
+  const heading = isProfile
+    ? routeHeadings.profile
+    : isSettings
+      ? routeHeadings.settings
+      : isReports
+        ? routeHeadings.reports
+        : isInsights
+          ? routeHeadings.insights
+          : isIntegrations
+            ? routeHeadings.integrations
+            : isB2B
+              ? routeHeadings.b2b
+              : isCustomers
+                ? routeHeadings.customers
+                : isRefunds
+                  ? routeHeadings.refunds
+                  : isPayments
+                    ? routeHeadings.payments
+                    : isOrders
+                      ? routeHeadings.orders
+                      : isInventory
+                        ? routeHeadings.inventory
+                        : isProducts
+                          ? routeHeadings.products
+                          : routeHeadings.dashboard;
   const currentDate = getCurrentAdminDate();
 
   const isActive = (href?: string) => {
@@ -171,6 +183,50 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const showNotice = (label: string) => {
     setNotice(`${label} bölümü yakında kullanıma açılacak.`);
     setMenuOpen(false);
+  };
+
+  useEffect(() => {
+    if (!profileMenuOpen) return;
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!profileMenuRef.current?.contains(event.target as Node)) {
+        setProfileMenuOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setProfileMenuOpen(false);
+        profileMenuRef.current
+          ?.querySelector<HTMLButtonElement>("[aria-haspopup='menu']")
+          ?.focus();
+      }
+    };
+    document.addEventListener("pointerdown", handlePointerDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [profileMenuOpen]);
+
+  const handleProfileMenuKeyDown = (
+    event: React.KeyboardEvent<HTMLDivElement>,
+  ) => {
+    if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const items = Array.from(
+      event.currentTarget.querySelectorAll<HTMLElement>("[role='menuitem']"),
+    );
+    if (!items.length) return;
+    const currentIndex = items.indexOf(document.activeElement as HTMLElement);
+    const nextIndex =
+      event.key === "Home"
+        ? 0
+        : event.key === "End"
+          ? items.length - 1
+          : event.key === "ArrowDown"
+            ? (currentIndex + 1) % items.length
+            : (currentIndex - 1 + items.length) % items.length;
+    items[nextIndex]?.focus();
   };
 
   return (
@@ -275,15 +331,55 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               <Icon name="bell" />
               <span>3</span>
             </button>
-            <button
-              type="button"
-              className={styles.profile}
-              onClick={() => showNotice("Profil")}
-            >
-              <span className={styles.avatar}>A</span>
-              <span>Admin</span>
-              <Icon name="chevron" />
-            </button>
+            <div className={styles.profileMenuWrap} ref={profileMenuRef}>
+              <button
+                type="button"
+                className={styles.profile}
+                aria-haspopup="menu"
+                aria-expanded={profileMenuOpen}
+                aria-controls="admin-profile-menu"
+                onClick={() => setProfileMenuOpen((open) => !open)}
+              >
+                <span className={styles.avatar}>AY</span>
+                <span>Admin</span>
+                <Icon name="chevron" />
+              </button>
+              {profileMenuOpen && (
+                <div
+                  id="admin-profile-menu"
+                  className={styles.profileDropdown}
+                  role="menu"
+                  aria-label="Profil seçenekleri"
+                  onKeyDown={handleProfileMenuKeyDown}
+                >
+                  <Link
+                    href="/admin/profile"
+                    role="menuitem"
+                    onClick={() => setProfileMenuOpen(false)}
+                  >
+                    <Icon name="customers" /> Profilim
+                  </Link>
+                  <Link
+                    href="/admin/settings"
+                    role="menuitem"
+                    onClick={() => setProfileMenuOpen(false)}
+                  >
+                    <Icon name="settings" /> Ayarlar
+                  </Link>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={styles.logoutItem}
+                    onClick={() => {
+                      setProfileMenuOpen(false);
+                      setLogoutModalOpen(true);
+                    }}
+                  >
+                    <Icon name="returns" /> Çıkış Yap
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
@@ -301,6 +397,20 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         )}
         {children}
       </main>
+      {logoutModalOpen && (
+        <AdminConfirmModal
+          eyebrow="Oturum güvenliği"
+          title="Çıkış yapmak istiyor musunuz?"
+          description="Yönetim panelindeki aktif oturumunuz kapatılacak. Bu demo sürümünde yalnızca arayüz durumu güncellenir."
+          confirmLabel="Çıkış Yap"
+          danger
+          onCancel={() => setLogoutModalOpen(false)}
+          onConfirm={() => {
+            setLogoutModalOpen(false);
+            setNotice("Çıkış işlemi demo ortamında tamamlandı.");
+          }}
+        />
+      )}
     </div>
   );
 }
