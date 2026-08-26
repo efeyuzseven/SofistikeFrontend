@@ -1,0 +1,142 @@
+name: Deploy frontend to AWS test
+
+on:
+  push:
+    branches: [main-prod]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: sofistike-frontend-test
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: eu-central-1
+  AWS_ROLE_ARN: arn:aws:iam::890571110014:role/sofistike-test-github-deploy
+  STACK_NAME: sofistike-test
+  CONTAINER_NAME: sofistike-frontend
+
+jobs:
+  verify-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify
+        run: npm run check
+
+      - name: Build
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Read deployment outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          stack_output() {
+            aws cloudformation describe-stacks \
+              --stack-name "$STACK_NAME" \
+              --query "Stacks[0].Outputs[?OutputKey=='$1'].OutputValue | [0]" \
+              --output text
+          }
+
+          echo "ECR_URI=$(stack_output FrontendRepositoryUri)" >> "$GITHUB_ENV"
+          echo "ECS_CLUSTER=$(stack_output ClusterName)" >> "$GITHUB_ENV"
+          echo "ECS_SERVICE=$(stack_output FrontendServiceName)" >> "$GITHUB_ENV"
+
+      - name: Build and push immutable image
+        shell: bash
+        run: |
+          set -euo pipefail
+          IMAGE_URI="${ECR_URI}:${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}"
+          docker build \
+            --build-arg "DEPLOYMENT_VERSION=${GITHUB_SHA}" \
+            --tag "$IMAGE_URI" \
+            .
+          docker push "$IMAGE_URI"
+          echo "IMAGE_URI=$IMAGE_URI" >> "$GITHUB_ENV"
+
+      - name: Register task definition
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          CURRENT_TASK_DEFINITION=$(aws ecs describe-services \
+            --cluster "$ECS_CLUSTER" \
+            --services "$ECS_SERVICE" \
+            --query 'services[0].taskDefinition' \
+            --output text)
+
+          aws ecs describe-task-definition \
+            --task-definition "$CURRENT_TASK_DEFINITION" \
+            --query taskDefinition > current-task-definition.json
+
+          jq --arg image "$IMAGE_URI" --arg container "$CONTAINER_NAME" '
+            {
+              family,
+              taskRoleArn,
+              executionRoleArn,
+              networkMode,
+              containerDefinitions,
+              volumes,
+              placementConstraints,
+              requiresCompatibilities,
+              cpu,
+              memory,
+              runtimePlatform,
+              ephemeralStorage
+            }
+            | .containerDefinitions |= map(
+                if .name == $container then .image = $image else . end
+              )
+            | with_entries(select(.value != null))
+          ' current-task-definition.json > next-task-definition.json
+
+          NEXT_TASK_DEFINITION=$(aws ecs register-task-definition \
+            --cli-input-json file://next-task-definition.json \
+            --query 'taskDefinition.taskDefinitionArn' \
+            --output text)
+
+          echo "NEXT_TASK_DEFINITION=$NEXT_TASK_DEFINITION" >> "$GITHUB_ENV"
+
+      - name: Deploy frontend service
+        shell: bash
+        run: |
+          set -euo pipefail
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service "$ECS_SERVICE" \
+            --task-definition "$NEXT_TASK_DEFINITION" \
+            --desired-count 1 \
+            --force-new-deployment > /dev/null
+
+          aws ecs wait services-stable \
+            --cluster "$ECS_CLUSTER" \
+            --services "$ECS_SERVICE"
+
+      - name: Verify public health endpoint
+        run: curl --fail --silent --show-error --retry 12 --retry-all-errors --retry-delay 10 https://sofistike-test.d1-tech.com/api/health
