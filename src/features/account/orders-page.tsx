@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { BackendOrder } from "@/lib/orders";
 import { AccountNavigation } from "./account-navigation";
 import styles from "./orders-page.module.css";
 
 type OrderState = "ongoing" | "delivered" | "returned" | "cancelled";
 type OrderTab = "all" | "ongoing" | "delivered" | "returns";
 type OpenFilter = "period" | "sort" | null;
+const currentTimeMs = Date.now();
 
 type FilterOption = {
   label: string;
@@ -26,6 +28,7 @@ type OrderProduct = {
 };
 
 type Order = {
+  backendId?: string;
   id: string;
   date: string;
   dateValue: string;
@@ -39,156 +42,73 @@ type Order = {
   delivery: string;
 };
 
-const initialOrders: Order[] = [
-  {
-    id: "SFX-260812-1842",
-    date: "12 Ağustos 2026",
-    dateValue: "2026-08-12",
-    state: "ongoing",
-    status: "Parçalı gönderim",
-    statusNote: "Ürünleriniz farklı teslimat adımlarında",
-    total: 1348,
-    products: [
-      {
-        id: "comfort-pillow",
-        name: "+XTRA One Konfor Yastığı",
-        image: "/images/hero-sleep.png",
-        quantity: 1,
-        price: 999,
-        stateLabel: "Dağıtımda",
-        stateDate: "Bugün 18.00'e kadar teslim edilmesi planlanıyor.",
-      },
-      {
-        id: "calm-aroma",
-        name: "+XTRA Sakin Aroma",
-        image: "/images/hero-home.png",
-        quantity: 1,
-        price: 349,
-        stateLabel: "Teslim edilemedi",
-        stateDate: "13 Ağustos'ta yeniden teslimat denenecek.",
-        tone: "problem",
-      },
-    ],
+function mapBackendOrder(order: BackendOrder): Order {
+  const state: OrderState =
+    order.status === "Delivered"
+      ? "delivered"
+      : order.status === "Cancelled"
+        ? "cancelled"
+        : order.status === "Returned"
+          ? "returned"
+          : "ongoing";
+  const statusLabels: Record<string, string> = {
+    AwaitingPayment: "Ödeme bekliyor",
+    Confirmed: "Onaylandı",
+    Preparing: "Hazırlanıyor",
+    Shipped: "Kargoya verildi",
+    Delivered: "Teslim edildi",
+    Cancelled: "İptal edildi",
+    Returned: "İade edildi",
+  };
+  const paymentLabels: Record<string, string> = {
+    Pending: "Ödeme bekliyor",
+    Paid: "Ödendi",
+    Failed: "Ödeme başarısız",
+    Refunded: "İade edildi",
+  };
+  const createdAt = new Date(order.createdAtUtc);
+
+  return {
+    backendId: order.id,
+    id: order.orderNumber,
+    date: createdAt.toLocaleDateString("tr-TR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }),
+    dateValue: createdAt.toISOString().slice(0, 10),
+    state,
+    status: statusLabels[order.status] ?? order.status,
+    statusNote:
+      order.status === "AwaitingPayment"
+        ? "Ödeme sağlayıcısı bağlanana kadar siparişiniz bekletiliyor"
+        : "Sipariş durumu mağaza sistemi tarafından güncellenir",
+    total: order.totalAmount,
+    products: order.items.map((item) => ({
+      id: item.id,
+      name: item.productName,
+      image: "/images/hero-home.png",
+      quantity: item.quantity,
+      price: item.unitPrice,
+      stateLabel: statusLabels[order.status] ?? order.status,
+      stateDate: createdAt.toLocaleDateString("tr-TR"),
+      tone: state,
+    })),
     timeline: [
-      { label: "Sipariş alındı", date: "11 Ağustos, 10.24", complete: true },
-      { label: "Hazırlandı", date: "11 Ağustos, 17.40", complete: true },
-      { label: "Kargoya verildi", date: "12 Ağustos, 09.15", complete: true },
-      { label: "Teslim edilecek", complete: false },
-    ],
-    payment: "Kredi kartı •••• 1842",
-    delivery: "Umay — İstanbul / Kadıköy",
-  },
-  {
-    id: "SFX-260806-0921",
-    date: "6 Ağustos 2026",
-    dateValue: "2026-08-06",
-    state: "ongoing",
-    status: "Hazırlanıyor",
-    statusNote: "En geç 13 Ağustos'ta kargoya verilecek",
-    total: 279,
-    products: [
       {
-        id: "textile-refresher",
-        name: "Yastık & Tekstil Ferahlatıcı",
-        image: "/images/hero-living.png",
-        quantity: 1,
-        price: 279,
-        stateLabel: "Hazırlanıyor",
-        stateDate: "Siparişiniz özenle paketleniyor.",
+        label: "Sipariş alındı",
+        date: createdAt.toLocaleString("tr-TR"),
+        complete: true,
+      },
+      {
+        label: statusLabels[order.status] ?? order.status,
+        complete: order.status !== "AwaitingPayment",
       },
     ],
-    timeline: [
-      { label: "Sipariş alındı", date: "6 Ağustos, 14.08", complete: true },
-      { label: "Hazırlanıyor", date: "7 Ağustos, 09.30", complete: true },
-      { label: "Kargoya verilecek", complete: false },
-      { label: "Teslim edilecek", complete: false },
-    ],
-    payment: "Kredi kartı •••• 1842",
-    delivery: "Umay — İstanbul / Kadıköy",
-  },
-  {
-    id: "SFX-260724-0715",
-    date: "24 Temmuz 2026",
-    dateValue: "2026-07-24",
-    state: "delivered",
-    status: "Teslim edildi",
-    statusNote: "26 Temmuz 2026 tarihinde teslim edildi",
-    total: 699,
-    products: [
-      {
-        id: "towel-set",
-        name: "Yumuşak Dokulu Havlu Seti",
-        image: "/images/hero-living.png",
-        quantity: 1,
-        price: 699,
-        stateLabel: "Teslim edildi",
-        stateDate: "26 Temmuz 2026 tarihinde teslim edildi.",
-      },
-    ],
-    timeline: [
-      { label: "Sipariş alındı", date: "24 Temmuz, 11.20", complete: true },
-      { label: "Hazırlandı", date: "24 Temmuz, 16.10", complete: true },
-      { label: "Kargoya verildi", date: "25 Temmuz, 08.45", complete: true },
-      { label: "Teslim edildi", date: "26 Temmuz, 13.22", complete: true },
-    ],
-    payment: "Kredi kartı •••• 1842",
-    delivery: "Umay — İstanbul / Kadıköy",
-  },
-  {
-    id: "SFX-260710-0429",
-    date: "10 Temmuz 2026",
-    dateValue: "2026-07-10",
-    state: "returned",
-    status: "İade edildi",
-    statusNote: "Ücret iadesi 18 Temmuz'da bankanıza iletildi",
-    total: 429,
-    products: [
-      {
-        id: "kitchen-care",
-        name: "Mutfak Bakım Başlangıç Seti",
-        image: "/images/hero-home.png",
-        quantity: 1,
-        price: 429,
-        stateLabel: "İade edildi",
-        stateDate: "18 Temmuz 2026 tarihinde ücret iadesi yapıldı.",
-      },
-    ],
-    timeline: [
-      { label: "Teslim edildi", date: "12 Temmuz", complete: true },
-      { label: "İade talebi", date: "14 Temmuz", complete: true },
-      { label: "Ürün incelendi", date: "17 Temmuz", complete: true },
-      { label: "Ücret iade edildi", date: "18 Temmuz", complete: true },
-    ],
-    payment: "Kredi kartı •••• 1842",
-    delivery: "Umay — İstanbul / Kadıköy",
-  },
-  {
-    id: "SFX-260628-0189",
-    date: "28 Haziran 2026",
-    dateValue: "2026-06-28",
-    state: "cancelled",
-    status: "İptal edildi",
-    statusNote: "Ödeme provizyonu aynı gün kaldırıldı",
-    total: 189,
-    products: [
-      {
-        id: "lemon-detergent",
-        name: "Limon Bulaşık Deterjanı",
-        image: "/images/hero-home.png",
-        quantity: 1,
-        price: 189,
-        stateLabel: "İptal edildi",
-        stateDate: "28 Haziran 2026 tarihinde iptal edildi.",
-      },
-    ],
-    timeline: [
-      { label: "Sipariş alındı", date: "28 Haziran, 09.05", complete: true },
-      { label: "İptal edildi", date: "28 Haziran, 09.22", complete: true },
-    ],
-    payment: "Kredi kartı •••• 1842",
-    delivery: "Umay — İstanbul / Kadıköy",
-  },
-];
+    payment: paymentLabels[order.paymentStatus] ?? order.paymentStatus,
+    delivery: `${order.recipientName} — ${order.city} / ${order.district}`,
+  };
+}
 
 const tabs: { id: OrderTab; label: string }[] = [
   { id: "all", label: "Tümü" },
@@ -357,7 +277,8 @@ function OrderCard({
         </button>
         {order.state === "ongoing" ? (
           <>
-            {order.status === "Hazırlanıyor" ? (
+            {order.status === "Hazırlanıyor" ||
+            order.status === "Ödeme bekliyor" ? (
               <button
                 type="button"
                 className={styles.dangerAction}
@@ -399,7 +320,9 @@ function OrderCard({
 }
 
 export function OrdersPage() {
-  const [orderItems, setOrderItems] = useState(initialOrders);
+  const [orderItems, setOrderItems] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [activeTab, setActiveTab] = useState<OrderTab>("all");
   const [query, setQuery] = useState("");
   const [period, setPeriod] = useState("all");
@@ -412,6 +335,48 @@ export function OrdersPage() {
   const [notice, setNotice] = useState("");
   const [rating, setRating] = useState(0);
   const controlsRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadOrders() {
+      try {
+        const response = await fetch("/api/account/orders", {
+          cache: "no-store",
+        });
+        if (response.status === 401) {
+          window.location.assign("/login?redirect=%2Fhesabim%2Fsiparislerim");
+          return;
+        }
+        const payload = (await response.json().catch(() => null)) as
+          BackendOrder[] | { message?: string } | null;
+        if (!response.ok) {
+          throw new Error(
+            payload && !Array.isArray(payload) && payload.message
+              ? payload.message
+              : "Siparişler yüklenemedi.",
+          );
+        }
+        if (active)
+          setOrderItems((payload as BackendOrder[]).map(mapBackendOrder));
+      } catch (reason) {
+        if (active) {
+          setLoadError(
+            reason instanceof Error
+              ? reason.message
+              : "Siparişler yüklenemedi.",
+          );
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+
+    void loadOrders();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const periodOptions: FilterOption[] = [
     { label: "Tüm zamanlar", value: "all" },
@@ -469,10 +434,12 @@ export function OrdersPage() {
         order.products.some((product) =>
           product.name.toLocaleLowerCase("tr-TR").includes(normalized),
         );
+      const ageInDays =
+        (currentTimeMs - new Date(order.dateValue).getTime()) / 86_400_000;
       const periodMatches =
         period === "all" ||
-        (period === "30" && order.dateValue >= "2026-07-13") ||
-        (period === "90" && order.dateValue >= "2026-05-14");
+        (period === "30" && ageInDays <= 30) ||
+        (period === "90" && ageInDays <= 90);
       return tabMatches && searchMatches && periodMatches;
     });
 
@@ -497,9 +464,24 @@ export function OrdersPage() {
     window.setTimeout(() => setNotice(""), 3000);
   }
 
-  function cancelOrder() {
+  async function cancelOrder() {
     if (!dialog) return;
     const orderId = dialog.order.id;
+    if (!dialog.order.backendId) return;
+
+    const response = await fetch(
+      `/api/account/orders/${dialog.order.backendId}/cancel`,
+      { method: "POST" },
+    );
+    if (!response.ok) {
+      const payload = (await response.json().catch(() => null)) as {
+        message?: string;
+      } | null;
+      showNotice(payload?.message ?? "Sipariş iptal edilemedi.");
+      setDialog(null);
+      return;
+    }
+
     setOrderItems((current) =>
       current.map((order) =>
         order.id === orderId
@@ -507,7 +489,7 @@ export function OrdersPage() {
               ...order,
               state: "cancelled" as const,
               status: "İptal edildi",
-              statusNote: "İptal işlemi tasarım önizlemesinde tamamlandı",
+              statusNote: "Sipariş iptal edildi",
               products: order.products.map((product) => ({
                 ...product,
                 stateLabel: "İptal edildi",
@@ -609,8 +591,14 @@ export function OrdersPage() {
           </div>
 
           <div className={styles.resultSummary} aria-live="polite">
-            <span>{visibleOrders.length} sipariş gösteriliyor</span>
-            <small>Durumlar örnek verilerle gösterilmektedir.</small>
+            <span>
+              {loading
+                ? "Siparişler yükleniyor…"
+                : `${visibleOrders.length} sipariş gösteriliyor`}
+            </span>
+            <small>
+              {loadError || "Durumlar mağaza veritabanından güncellenmektedir."}
+            </small>
           </div>
 
           {visibleOrders.length ? (
@@ -620,6 +608,12 @@ export function OrdersPage() {
                   order={order}
                   key={order.id}
                   onAction={(type, selectedOrder) => {
+                    if (type === "review") {
+                      window.location.assign(
+                        `/hesabim/degerlendirmelerim?orderId=${selectedOrder.backendId ?? ""}`,
+                      );
+                      return;
+                    }
                     setRating(0);
                     setDialog({ type, order: selectedOrder });
                   }}

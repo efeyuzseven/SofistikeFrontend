@@ -133,7 +133,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
         });
         await replaceFromResponse(response);
       } catch (reason) {
-        setError(reason instanceof Error ? reason.message : "Ürün eklenemedi.");
+        const failure =
+          reason instanceof Error ? reason : new Error("Ürün eklenemedi.");
+        setError(failure.message);
+        throw failure;
       }
     },
     [replaceFromResponse],

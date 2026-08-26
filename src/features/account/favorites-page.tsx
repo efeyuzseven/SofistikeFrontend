@@ -322,19 +322,23 @@ function FavoriteCard({
           type="button"
           className={styles.cartButton}
           disabled={product.stock === "Yakında"}
-          onClick={() => {
+          onClick={async () => {
             if (product.stock === "Yakında") return;
-            addItem({
-              id: product.id,
-              name: product.name,
-              category: product.category,
-              price: product.price,
-              image: product.image,
-              color: product.color,
-              delivery: product.delivery,
-            });
-            setAdded(true);
-            window.setTimeout(() => setAdded(false), 1800);
+            try {
+              await addItem({
+                id: product.id,
+                name: product.name,
+                category: product.category,
+                price: product.price,
+                image: product.image,
+                color: product.color,
+                delivery: product.delivery,
+              });
+              setAdded(true);
+              window.setTimeout(() => setAdded(false), 1800);
+            } catch {
+              // Sepet sağlayıcısı kullanıcıya gösterilecek hatayı yönetir.
+            }
           }}
         >
           {added

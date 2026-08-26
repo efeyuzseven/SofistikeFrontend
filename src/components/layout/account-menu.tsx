@@ -178,6 +178,12 @@ export function AccountMenu() {
           </div>
 
           <nav aria-label="Hesap işlemleri">
+            {user.role.toLocaleLowerCase("tr-TR") === "admin" ? (
+              <Link href="/admin/urunler">
+                <span>Ürün Yönetimi</span>
+                <span aria-hidden="true">→</span>
+              </Link>
+            ) : null}
             <Link href="/hesabim/bilgilerim">
               <span>Kullanıcı Bilgilerim</span>
               <span aria-hidden="true">→</span>

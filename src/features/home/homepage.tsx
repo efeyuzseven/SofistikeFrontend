@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useCart } from "@/features/cart/cart-context";
+import type { CatalogProduct, PagedCatalogProducts } from "@/lib/catalog";
 import type { BackendPagedFavorites } from "@/lib/favorites";
 import type {
   CSSProperties,
@@ -24,6 +25,7 @@ type ProductItem = {
   category: string;
   description: string;
   price: string;
+  priceValue?: number;
   rating: number;
   reviewCount: number;
   delivery: string;
@@ -31,6 +33,8 @@ type ProductItem = {
   badge?: string;
   image: string;
   color: string;
+  isPopular?: boolean;
+  isXtra?: boolean;
 };
 
 function toCartProduct(product: ProductItem) {
@@ -38,7 +42,8 @@ function toCartProduct(product: ProductItem) {
     id: product.id,
     name: product.name,
     category: product.category,
-    price: Number(product.price.replaceAll(/[^0-9]/g, "")),
+    price:
+      product.priceValue ?? Number(product.price.replaceAll(/[^0-9]/g, "")),
     image: product.image,
     color: product.color,
     delivery: product.delivery,
@@ -88,7 +93,7 @@ const modules: ModuleItem[] = [
   { name: "İnovasyon Lab", color: brandPalette.midnight, x: 66.09, y: 69.5 },
 ];
 
-const featuredProducts: ProductItem[] = [
+const fallbackFeaturedProducts: ProductItem[] = [
   {
     id: "05527362-1d91-4b47-a598-bf334c4996bb",
     name: "+XTRA Sakin Aroma",
@@ -131,7 +136,7 @@ const featuredProducts: ProductItem[] = [
   },
 ];
 
-const labProducts: ProductItem[] = [
+const fallbackLabProducts: ProductItem[] = [
   {
     id: "3310ead5-3459-43a7-982f-6446cc5af664",
     name: "+XTRA One Konfor Yastığı",
@@ -214,6 +219,50 @@ const labProducts: ProductItem[] = [
     color: brandPalette.terracotta,
   },
 ];
+
+const categoryColors: Record<string, string> = {
+  Aroma: brandPalette.olive,
+  Uyku: brandPalette.softPurple,
+  "Ev Tekstili": brandPalette.terracotta,
+  Mutfak: brandPalette.ochre,
+  Banyo: brandPalette.deepTeal,
+  Çamaşır: brandPalette.mistMint,
+  Dekorasyon: brandPalette.ochre,
+  "Evcil Dostlar": brandPalette.terracotta,
+};
+
+function mapCatalogProduct(product: CatalogProduct): ProductItem {
+  const category = product.categories[0]?.name ?? "Sofistike";
+  const priceValue = product.price?.effectivePrice ?? 0;
+  const stock =
+    product.stock.status === "OutOfStock"
+      ? "Yakında"
+      : product.stock.status === "LowStock"
+        ? "Son 3 ürün"
+        : "Stokta";
+
+  return {
+    id: product.id,
+    name: product.name,
+    category,
+    description: product.shortDescription,
+    price: new Intl.NumberFormat("tr-TR", {
+      style: "currency",
+      currency: product.price?.currencyCode ?? "TRY",
+      maximumFractionDigits: 2,
+    }).format(priceValue),
+    priceValue,
+    rating: 0,
+    reviewCount: 0,
+    delivery: stock === "Yakında" ? "Stok yenilenince" : "2 gün",
+    stock,
+    badge: product.isXtra ? "+XTRA" : undefined,
+    image: product.primaryImage?.url ?? "/images/hero-home.png",
+    color: categoryColors[category] ?? brandPalette.midnight,
+    isPopular: product.isPopular,
+    isXtra: product.isXtra,
+  };
+}
 
 const domesticMarketplaces = [
   "Amazon Türkiye",
@@ -459,14 +508,18 @@ function ProductCard({
     };
   }, []);
 
-  const addToCart = () => {
+  const addToCart = async () => {
     if (!available) return;
-    addItem(toCartProduct(product));
-    setAdded(true);
-    if (feedbackTimerRef.current !== null) {
-      window.clearTimeout(feedbackTimerRef.current);
+    try {
+      await addItem(toCartProduct(product));
+      setAdded(true);
+      if (feedbackTimerRef.current !== null) {
+        window.clearTimeout(feedbackTimerRef.current);
+      }
+      feedbackTimerRef.current = window.setTimeout(() => setAdded(false), 1800);
+    } catch {
+      // Sepet sağlayıcısı kullanıcıya gösterilecek hata durumunu yönetir.
     }
-    feedbackTimerRef.current = window.setTimeout(() => setAdded(false), 1800);
   };
 
   return (
@@ -550,6 +603,9 @@ export default function HomePage() {
   const [pendingFavoriteIds, setPendingFavoriteIds] = useState<Set<string>>(
     new Set(),
   );
+  const [catalogProducts, setCatalogProducts] = useState<ProductItem[]>([]);
+  const [catalogLoaded, setCatalogLoaded] = useState(false);
+  const [catalogError, setCatalogError] = useState("");
   const moduleRailRef = useRef<HTMLDivElement>(null);
   const dragState = useRef({
     active: false,
@@ -557,6 +613,38 @@ export default function HomePage() {
     startX: 0,
     startScroll: 0,
   });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadCatalog() {
+      try {
+        const response = await fetch(
+          "/api/catalog/products?page=1&pageSize=100&sort=Recommended",
+          { cache: "no-store" },
+        );
+        if (!response.ok) throw new Error("Ürün kataloğu yüklenemedi.");
+        const payload = (await response.json()) as PagedCatalogProducts;
+        if (!cancelled) {
+          setCatalogProducts(payload.items.map(mapCatalogProduct));
+          setCatalogError("");
+        }
+      } catch {
+        if (!cancelled) {
+          setCatalogError(
+            "Canlı ürün kataloğuna ulaşılamadı; örnek ürünler gösteriliyor.",
+          );
+        }
+      } finally {
+        if (!cancelled) setCatalogLoaded(true);
+      }
+    }
+
+    void loadCatalog();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -700,6 +788,12 @@ export default function HomePage() {
       });
     }
   }
+
+  const hasLiveCatalog = catalogLoaded && !catalogError;
+  const featuredProducts = hasLiveCatalog
+    ? catalogProducts.filter((product) => product.isPopular).slice(0, 3)
+    : fallbackFeaturedProducts;
+  const labProducts = hasLiveCatalog ? catalogProducts : fallbackLabProducts;
 
   return (
     <main className={styles.page}>
@@ -879,6 +973,7 @@ export default function HomePage() {
             Tüm ürün seçkisini gör →
           </a>
         </div>
+        {catalogError ? <p role="status">{catalogError}</p> : null}
         <div className={styles.featuredRail} aria-label="Popüler ürünler">
           {featuredProducts.map((product) => (
             <ProductCard
@@ -979,9 +1074,13 @@ export default function HomePage() {
               </ul>
               <button
                 disabled={selectedProduct.stock === "Yakında"}
-                onClick={() => {
-                  addItem(toCartProduct(selectedProduct));
-                  setSelectedProduct(null);
+                onClick={async () => {
+                  try {
+                    await addItem(toCartProduct(selectedProduct));
+                    setSelectedProduct(null);
+                  } catch {
+                    // Sepet sağlayıcısı kullanıcıya gösterilecek hatayı yönetir.
+                  }
                 }}
                 type="button"
               >
