@@ -327,7 +327,10 @@ export function AdminProductsPage() {
           <h1>Ürün Yönetimi</h1>
           <p>Ürünleri yayınlayın, güncelleyin veya mağazadan kaldırın.</p>
         </div>
-        <Link href="/">Mağazayı Gör</Link>
+        <nav aria-label="Yönetim bağlantıları" className={styles.adminLinks}>
+          <Link href="/admin/bannerlar">Bannerlar</Link>
+          <Link href="/">Mağazayı Gör</Link>
+        </nav>
       </header>
 
       <div className={styles.workspace}>

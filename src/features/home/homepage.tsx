@@ -1,8 +1,9 @@
 "use client";
 
-import Image from "next/image";
+import Image, { type ImageLoaderProps } from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useCart } from "@/features/cart/cart-context";
+import type { HomeBanner } from "@/lib/banners";
 import type { CatalogProduct, PagedCatalogProducts } from "@/lib/catalog";
 import type { BackendPagedFavorites } from "@/lib/favorites";
 import type {
@@ -50,24 +51,59 @@ function toCartProduct(product: ProductItem) {
   };
 }
 
-const heroSlides = [
+type HeroSlide = Pick<
+  HomeBanner,
+  | "id"
+  | "imageUrl"
+  | "altText"
+  | "title"
+  | "description"
+  | "buttonText"
+  | "linkUrl"
+>;
+
+const fallbackHeroSlides: HeroSlide[] = [
   {
-    src: "/images/sofistike-manifesto-hero.webp",
-    alt: "Sofistike +XTRA — Smart Ideas. Better Living marka manifestosu",
+    id: "fallback-manifesto",
+    imageUrl: "/images/sofistike-manifesto-hero.webp",
+    altText: "Sofistike +XTRA — Smart Ideas. Better Living marka manifestosu",
+    title: null,
+    description: null,
+    buttonText: null,
+    linkUrl: null,
   },
   {
-    src: "/images/hero-living.png",
-    alt: "Sofistike +XTRA ev yaşam ürünleri koleksiyonu",
+    id: "fallback-living",
+    imageUrl: "/images/hero-living.png",
+    altText: "Sofistike +XTRA ev yaşam ürünleri koleksiyonu",
+    title: null,
+    description: null,
+    buttonText: null,
+    linkUrl: null,
   },
   {
-    src: "/images/hero-home.png",
-    alt: "Sofistike +XTRA aroma ve ev tekstili ürünleri",
+    id: "fallback-home",
+    imageUrl: "/images/hero-home.png",
+    altText: "Sofistike +XTRA aroma ve ev tekstili ürünleri",
+    title: null,
+    description: null,
+    buttonText: null,
+    linkUrl: null,
   },
   {
-    src: "/images/hero-sleep.png",
-    alt: "Sofistike +XTRA uyku çözümleri",
+    id: "fallback-sleep",
+    imageUrl: "/images/hero-sleep.png",
+    altText: "Sofistike +XTRA uyku çözümleri",
+    title: null,
+    description: null,
+    buttonText: null,
+    linkUrl: null,
   },
-] as const;
+];
+
+function passthroughImageLoader({ src }: ImageLoaderProps) {
+  return src;
+}
 
 const brandPalette = {
   terracotta: "#bf5d30",
@@ -594,6 +630,7 @@ export default function HomePage() {
   const { addItem } = useCart();
   const [dragging, setDragging] = useState(false);
   const [heroExpanded, setHeroExpanded] = useState(true);
+  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>(fallbackHeroSlides);
   const [heroSlideIndex, setHeroSlideIndex] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(
     null,
@@ -613,6 +650,31 @@ export default function HomePage() {
     startX: 0,
     startScroll: 0,
   });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadBanners() {
+      try {
+        const response = await fetch("/api/content/banners", {
+          cache: "no-store",
+        });
+        if (!response.ok) throw new Error("Bannerlar yüklenemedi.");
+        const payload = (await response.json()) as HomeBanner[];
+        if (!cancelled) {
+          setHeroSlides(payload);
+          setHeroSlideIndex(0);
+        }
+      } catch {
+        // İçerik servisi geçici olarak kapalıysa mevcut tasarım gösterilir.
+      }
+    }
+
+    void loadBanners();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -672,7 +734,7 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    if (!heroExpanded) return;
+    if (!heroExpanded || heroSlides.length <= 1) return;
 
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -684,7 +746,7 @@ export default function HomePage() {
     }, 3500);
 
     return () => window.clearInterval(timer);
-  }, [heroExpanded]);
+  }, [heroExpanded, heroSlides.length]);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -794,6 +856,7 @@ export default function HomePage() {
     ? catalogProducts.filter((product) => product.isPopular).slice(0, 3)
     : fallbackFeaturedProducts;
   const labProducts = hasLiveCatalog ? catalogProducts : fallbackLabProducts;
+  const currentHeroSlide = heroSlides[heroSlideIndex];
 
   return (
     <main className={styles.page}>
@@ -876,39 +939,67 @@ export default function HomePage() {
         </header>
       </div>
 
-      <section
-        className={`${styles.hero} ${styles.manifestoHero} ${
-          heroExpanded ? styles.heroExpanded : styles.heroCollapsed
-        }`}
-        id="anasayfa"
-      >
-        {heroSlides.map((slide, index) => (
-          <Image
-            alt={index === heroSlideIndex ? slide.alt : ""}
-            aria-hidden={index !== heroSlideIndex}
-            className={`${styles.manifestoHeroImage} ${
-              index === heroSlideIndex ? styles.manifestoHeroImageActive : ""
-            }`}
-            fetchPriority={index === 0 ? "high" : "auto"}
-            fill
-            key={slide.src}
-            priority={index === 0}
-            sizes="100vw"
-            src={slide.src}
-          />
-        ))}
-        <button
-          aria-expanded={heroExpanded}
-          aria-label={
-            heroExpanded ? "Marka görselini kapat" : "Marka görselini aç"
-          }
-          className={styles.heroToggle}
-          onClick={() => setHeroExpanded((value) => !value)}
-          type="button"
+      {currentHeroSlide ? (
+        <section
+          className={`${styles.hero} ${styles.manifestoHero} ${
+            heroExpanded ? styles.heroExpanded : styles.heroCollapsed
+          }`}
+          id="anasayfa"
         >
-          <span aria-hidden="true">{heroExpanded ? "↑" : "↓"}</span>
-        </button>
-      </section>
+          {heroSlides.map((slide, index) => {
+            const isRemoteImage = slide.imageUrl.startsWith("https://");
+            return (
+              <Image
+                alt={index === heroSlideIndex ? slide.altText : ""}
+                aria-hidden={index !== heroSlideIndex}
+                className={`${styles.manifestoHeroImage} ${
+                  index === heroSlideIndex
+                    ? styles.manifestoHeroImageActive
+                    : ""
+                }`}
+                fetchPriority={index === 0 ? "high" : "auto"}
+                fill
+                key={slide.id}
+                loader={isRemoteImage ? passthroughImageLoader : undefined}
+                priority={index === 0}
+                sizes="100vw"
+                src={slide.imageUrl}
+                unoptimized={isRemoteImage}
+              />
+            );
+          })}
+
+          {currentHeroSlide.title ||
+          currentHeroSlide.description ||
+          (currentHeroSlide.buttonText && currentHeroSlide.linkUrl) ? (
+            <div className={styles.manifestoHeroContent}>
+              {currentHeroSlide.title ? (
+                <h1>{currentHeroSlide.title}</h1>
+              ) : null}
+              {currentHeroSlide.description ? (
+                <p>{currentHeroSlide.description}</p>
+              ) : null}
+              {currentHeroSlide.buttonText && currentHeroSlide.linkUrl ? (
+                <a href={currentHeroSlide.linkUrl}>
+                  {currentHeroSlide.buttonText}
+                </a>
+              ) : null}
+            </div>
+          ) : null}
+
+          <button
+            aria-expanded={heroExpanded}
+            aria-label={
+              heroExpanded ? "Marka görselini kapat" : "Marka görselini aç"
+            }
+            className={styles.heroToggle}
+            onClick={() => setHeroExpanded((value) => !value)}
+            type="button"
+          >
+            <span aria-hidden="true">{heroExpanded ? "↑" : "↓"}</span>
+          </button>
+        </section>
+      ) : null}
 
       <section className={styles.modules} id="moduller">
         <div className={styles.sectionHeading}>
