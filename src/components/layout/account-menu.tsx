@@ -188,6 +188,10 @@ export function AccountMenu() {
                   <span>Banner Yönetimi</span>
                   <span aria-hidden="true">→</span>
                 </Link>
+                <Link href="/admin/kategoriler">
+                  <span>Kategori Yönetimi</span>
+                  <span aria-hidden="true">→</span>
+                </Link>
               </>
             ) : null}
             <Link href="/hesabim/bilgilerim">

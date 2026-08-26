@@ -48,7 +48,7 @@
   text-decoration: none;
 }
 
-.adminLinks a:first-child {
+.adminLinks a:not(:last-child) {
   color: #153e35;
   background: #dce7e2;
 }

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import type {
-  CatalogCategory,
+  ManagedCatalogCategory,
   CatalogProduct,
   CatalogProductDetails,
   PagedCatalogProducts,
@@ -16,7 +16,7 @@ type ProductForm = {
   productCode: string;
   name: string;
   slug: string;
-  categoryId: string;
+  categoryIds: string[];
   price: string;
   stockQuantity: string;
   shortDescription: string;
@@ -30,7 +30,7 @@ const emptyForm: ProductForm = {
   productCode: "",
   name: "",
   slug: "",
-  categoryId: "",
+  categoryIds: [],
   price: "",
   stockQuantity: "",
   shortDescription: "",
@@ -70,7 +70,7 @@ async function readError(response: Response, fallback: string) {
 
 export function AdminProductsPage() {
   const [access, setAccess] = useState<AccessState>("loading");
-  const [categories, setCategories] = useState<CatalogCategory[]>([]);
+  const [categories, setCategories] = useState<ManagedCatalogCategory[]>([]);
   const [products, setProducts] = useState<CatalogProduct[]>([]);
   const [form, setForm] = useState<ProductForm>(emptyForm);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
@@ -108,7 +108,7 @@ export function AdminProductsPage() {
       try {
         const [meResponse, categoryResponse] = await Promise.all([
           fetch("/api/auth/me", { cache: "no-store" }),
-          fetch("/api/catalog/categories", { cache: "no-store" }),
+          fetch("/api/admin/categories", { cache: "no-store" }),
         ]);
         if (!active) return;
         if (meResponse.status === 401) {
@@ -126,7 +126,11 @@ export function AdminProductsPage() {
         }
         if (!categoryResponse.ok) throw new Error("Kategoriler yüklenemedi.");
 
-        setCategories((await categoryResponse.json()) as CatalogCategory[]);
+        setCategories(
+          ((await categoryResponse.json()) as ManagedCatalogCategory[]).filter(
+            (category) => category.isActive,
+          ),
+        );
         setAccess("allowed");
         await loadProducts();
       } catch (reason) {
@@ -184,7 +188,7 @@ export function AdminProductsPage() {
         productCode: details.productCode,
         name: details.name,
         slug: details.slug,
-        categoryId: details.categories[0]?.id ?? "",
+        categoryIds: details.categories.map((category) => category.id),
         price: variant?.price?.listPrice.toString() ?? "",
         stockQuantity: variant?.stock.availableQuantity.toString() ?? "0",
         shortDescription: details.shortDescription,
@@ -209,6 +213,10 @@ export function AdminProductsPage() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitting) return;
+    if (form.categoryIds.length === 0) {
+      setError("Ürün için en az bir kategori seçin.");
+      return;
+    }
 
     setSubmitting(true);
     setError("");
@@ -328,6 +336,7 @@ export function AdminProductsPage() {
           <p>Ürünleri yayınlayın, güncelleyin veya mağazadan kaldırın.</p>
         </div>
         <nav aria-label="Yönetim bağlantıları" className={styles.adminLinks}>
+          <Link href="/admin/kategoriler">Kategoriler</Link>
           <Link href="/admin/bannerlar">Bannerlar</Link>
           <Link href="/">Mağazayı Gör</Link>
         </nav>
@@ -392,25 +401,46 @@ export function AdminProductsPage() {
                   required
                 />
               </label>
-              <label>
-                Kategori
-                <select
-                  value={form.categoryId}
-                  onChange={(event) =>
-                    updateForm("categoryId", event.target.value)
-                  }
-                  required
-                >
-                  <option value="" disabled>
-                    Kategori seçin
-                  </option>
+              <fieldset
+                className={`${styles.categorySelector} ${styles.fullWidth}`}
+              >
+                <legend>Kategoriler</legend>
+                <p>
+                  Ürünün görüneceği çözüm, oda ve ürün kategorilerini seçin. İlk
+                  seçilen kategori ana kategori olur.
+                </p>
+                <div>
                   {categories.map((category) => (
-                    <option value={category.id} key={category.id}>
-                      {category.name}
-                    </option>
+                    <label key={category.id}>
+                      <input
+                        checked={form.categoryIds.includes(category.id)}
+                        onChange={(event) => {
+                          const categoryIds = event.target.checked
+                            ? [...form.categoryIds, category.id]
+                            : form.categoryIds.filter(
+                                (categoryId) => categoryId !== category.id,
+                              );
+                          updateForm("categoryIds", categoryIds);
+                        }}
+                        type="checkbox"
+                      />
+                      <span>{category.name}</span>
+                      <small>
+                        {category.menuGroup === "Solution"
+                          ? "Solution"
+                          : category.menuGroup === "Room"
+                            ? "Room"
+                            : "Category"}
+                      </small>
+                    </label>
                   ))}
-                </select>
-              </label>
+                </div>
+                {form.categoryIds.length === 0 ? (
+                  <span className={styles.categoryWarning}>
+                    En az bir kategori seçin.
+                  </span>
+                ) : null}
+              </fieldset>
               <label>
                 Fiyat (₺)
                 <input

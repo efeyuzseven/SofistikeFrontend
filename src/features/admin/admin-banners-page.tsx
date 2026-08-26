@@ -244,6 +244,7 @@ export function AdminBannersPage() {
         </div>
         <nav aria-label="Yönetim bağlantıları" className={styles.adminLinks}>
           <Link href="/admin/urunler">Ürünler</Link>
+          <Link href="/admin/kategoriler">Kategoriler</Link>
           <Link href="/">Mağazayı Gör</Link>
         </nav>
       </header>

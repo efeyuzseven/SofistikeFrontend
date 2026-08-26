@@ -4,7 +4,12 @@ import Image, { type ImageLoaderProps } from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useCart } from "@/features/cart/cart-context";
 import type { HomeBanner } from "@/lib/banners";
-import type { CatalogProduct, PagedCatalogProducts } from "@/lib/catalog";
+import type {
+  CatalogCategory,
+  CategoryMenuGroup,
+  CatalogProduct,
+  PagedCatalogProducts,
+} from "@/lib/catalog";
 import type { BackendPagedFavorites } from "@/lib/favorites";
 import type {
   CSSProperties,
@@ -329,52 +334,69 @@ const globalMarketplaces = [
   "eMAG",
 ];
 
-const shopGroups = [
+type ShopGroup = {
+  menuGroup: CategoryMenuGroup;
+  title: string;
+  links: Array<[icon: string, name: string, slug: string]>;
+};
+
+const fallbackShopGroups: ShopGroup[] = [
   {
+    menuGroup: "Solution",
     title: "SHOP BY SOLUTIONS",
     links: [
-      ["☾", "Sleep Better"],
-      ["⌁", "Allergy Care"],
-      ["⌂", "Home Reset"],
-      ["♧", "Laundry Care"],
-      ["♨", "Bathroom Care"],
-      ["▣", "Kitchen Care"],
-      ["♧", "Pet Friendly"],
-      ["♡", "Healthy Living"],
-      ["▤", "Organization"],
-      ["◉", "Innovation Lab"],
+      ["☾", "Sleep Better", "sleep-better"],
+      ["⌁", "Allergy Care", "allergy-care"],
+      ["⌂", "Home Reset", "home-reset"],
+      ["♧", "Laundry Care", "laundry-care"],
+      ["♨", "Bathroom Care", "bathroom-care"],
+      ["▣", "Kitchen Care", "kitchen-care"],
+      ["♧", "Pet Friendly", "pet-friendly"],
+      ["♡", "Healthy Living", "healthy-living"],
+      ["▤", "Organization", "organization"],
+      ["◉", "Innovation Lab", "innovation-lab"],
     ],
   },
   {
+    menuGroup: "Room",
     title: "SHOP BY ROOM",
     links: [
-      ["▱", "Bedroom"],
-      ["♨", "Bathroom"],
-      ["▤", "Living Room"],
-      ["▦", "Kitchen"],
-      ["▣", "Laundry Room"],
-      ["♧", "Kids Room"],
-      ["▯", "Guest Room"],
-      ["♧", "Pet Area"],
-      ["▢", "Travel"],
+      ["▱", "Bedroom", "bedroom"],
+      ["♨", "Bathroom", "bathroom"],
+      ["▤", "Living Room", "living-room"],
+      ["▦", "Kitchen", "kitchen-room"],
+      ["▣", "Laundry Room", "laundry-room"],
+      ["♧", "Kids Room", "kids-room"],
+      ["▯", "Guest Room", "guest-room"],
+      ["♧", "Pet Area", "pet-area"],
+      ["▢", "Travel", "travel"],
     ],
   },
   {
+    menuGroup: "Category",
     title: "SHOP BY CATEGORY",
     links: [
-      ["▤", "Bedding"],
-      ["▥", "Bath"],
-      ["⌇", "Home Fragrance"],
-      ["▣", "Laundry"],
-      ["⌁", "Cleaning"],
-      ["▢", "Kitchen"],
-      ["▯", "Personal Care"],
-      ["▤", "Storage & Organization"],
-      ["♧", "Pet Care"],
-      ["⌁", "Accessories"],
-      ["♧", "Gifts"],
+      ["▤", "Bedding", "bedding"],
+      ["▥", "Bath", "bath"],
+      ["⌇", "Home Fragrance", "home-fragrance"],
+      ["▣", "Laundry", "laundry"],
+      ["⌁", "Cleaning", "cleaning"],
+      ["▢", "Kitchen", "kitchen"],
+      ["▯", "Personal Care", "personal-care"],
+      ["▤", "Storage & Organization", "storage-organization"],
+      ["♧", "Pet Care", "pet-care"],
+      ["⌁", "Accessories", "accessories"],
+      ["♧", "Gifts", "gifts"],
     ],
   },
+];
+
+const shopGroupDefinitions: Array<
+  Pick<ShopGroup, "menuGroup" | "title"> & { icon: string }
+> = [
+  { menuGroup: "Solution", title: "SHOP BY SOLUTIONS", icon: "◇" },
+  { menuGroup: "Room", title: "SHOP BY ROOM", icon: "⌂" },
+  { menuGroup: "Category", title: "SHOP BY CATEGORY", icon: "▦" },
 ];
 
 function Icon({ children, size = 24 }: { children: ReactNode; size?: number }) {
@@ -636,6 +658,7 @@ export default function HomePage() {
     null,
   );
   const [shopOpen, setShopOpen] = useState(false);
+  const [shopGroups, setShopGroups] = useState<ShopGroup[]>(fallbackShopGroups);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
   const [pendingFavoriteIds, setPendingFavoriteIds] = useState<Set<string>>(
     new Set(),
@@ -650,6 +673,43 @@ export default function HomePage() {
     startX: 0,
     startScroll: 0,
   });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadShopCategories() {
+      try {
+        const response = await fetch("/api/catalog/categories", {
+          cache: "no-store",
+        });
+        if (!response.ok) throw new Error("Kategoriler yüklenemedi.");
+        const categories = (await response.json()) as CatalogCategory[];
+        if (!cancelled) {
+          setShopGroups(
+            shopGroupDefinitions.map((group) => ({
+              menuGroup: group.menuGroup,
+              title: group.title,
+              links: categories
+                .filter((category) => category.menuGroup === group.menuGroup)
+                .sort(
+                  (left, right) =>
+                    left.displayOrder - right.displayOrder ||
+                    left.name.localeCompare(right.name, "tr-TR"),
+                )
+                .map((category) => [group.icon, category.name, category.slug]),
+            })),
+          );
+        }
+      } catch {
+        // Kategori servisi geçici olarak kapalıysa mevcut menü gösterilir.
+      }
+    }
+
+    void loadShopCategories();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -681,8 +741,14 @@ export default function HomePage() {
 
     async function loadCatalog() {
       try {
+        const category = new URLSearchParams(window.location.search).get(
+          "category",
+        );
+        const categoryQuery = category
+          ? `&category=${encodeURIComponent(category)}`
+          : "";
         const response = await fetch(
-          "/api/catalog/products?page=1&pageSize=100&sort=Recommended",
+          `/api/catalog/products?page=1&pageSize=100&sort=Recommended${categoryQuery}`,
           { cache: "no-store" },
         );
         if (!response.ok) throw new Error("Ürün kataloğu yüklenemedi.");
@@ -900,14 +966,10 @@ export default function HomePage() {
                 {shopGroups.map((group) => (
                   <div key={group.title}>
                     <h3>{group.title}</h3>
-                    {group.links.map(([icon, link]) => (
+                    {group.links.map(([icon, link, slug]) => (
                       <a
-                        href={
-                          link === "Innovation Lab"
-                            ? "#innovation-lab"
-                            : "#moduller"
-                        }
-                        key={link}
+                        href={`/?category=${encodeURIComponent(slug)}#tum-urunler`}
+                        key={slug}
                         onClick={() => setShopOpen(false)}
                       >
                         <span aria-hidden="true">{icon}</span>

@@ -1,10 +1,19 @@
+export type CategoryMenuGroup = "Solution" | "Room" | "Category";
+
 export type CatalogCategory = {
   id: string;
   name: string;
   slug: string;
   description: string | null;
   parentSlug: string | null;
+  menuGroup: CategoryMenuGroup;
   displayOrder: number;
+};
+
+export type ManagedCatalogCategory = Omit<CatalogCategory, "parentSlug"> & {
+  isActive: boolean;
+  productCount: number;
+  updatedAtUtc: string;
 };
 
 export type CatalogProductImage = {
