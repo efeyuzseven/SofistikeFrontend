@@ -103,7 +103,10 @@ function ProductCard({
 
   return (
     <article className={styles.productCard}>
-      <div className={styles.productImage}>
+      <div
+        className={styles.productImage}
+        style={{ "--product-image": `url(${imageUrl})` } as CSSProperties}
+      >
         <Image
           alt={product.primaryImage?.altText || product.name}
           fill
