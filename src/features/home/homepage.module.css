@@ -3098,8 +3098,8 @@
 .productShowcase {
   display: grid;
   grid-template-columns: minmax(270px, 0.36fr) minmax(0, 1fr);
-  gap: clamp(28px, 3.5vw, 60px);
-  padding: clamp(38px, 3.6vw, 56px) 7vw;
+  gap: clamp(24px, 3vw, 48px);
+  padding: clamp(28px, 2.6vw, 40px) 7vw;
   scroll-margin-top: 112px;
   border-top: 1px solid var(--warm-sand);
   border-bottom: 1px solid var(--warm-sand);
@@ -3130,14 +3130,14 @@
 
 .showcaseIntro h2 {
   max-width: 460px;
-  margin: 15px 0 16px;
-  font-size: clamp(36px, 3.5vw, 60px);
+  margin: 10px 0 12px;
+  font-size: clamp(34px, 3vw, 52px);
   line-height: 1;
 }
 
 .showcaseIntro p {
   max-width: 430px;
-  margin: 0 0 24px;
+  margin: 0 0 16px;
   color: #59625c;
   font-size: clamp(14px, 1vw, 17px);
   line-height: 1.7;
@@ -3203,32 +3203,35 @@
 }
 
 .productShowcase .productVisual {
-  min-height: 176px;
+  min-height: 140px;
 }
 
 .productShowcase .productInfo {
-  padding: 16px 20px 17px;
+  padding: 12px 18px 14px;
 }
 
 .productShowcase .productInfo h3 {
-  min-height: 34px;
-  margin: 7px 0;
+  min-height: 28px;
+  margin: 5px 0;
+  font-size: clamp(17px, 1.1vw, 20px);
 }
 
 .productShowcase .productRating {
-  margin-bottom: 7px;
+  margin-bottom: 5px;
 }
 
 .productShowcase .productInfo p {
-  min-height: 44px;
+  min-height: 34px;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .productShowcase .productAvailability {
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .productShowcase .productMeta {
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 .bestSellerRail {
