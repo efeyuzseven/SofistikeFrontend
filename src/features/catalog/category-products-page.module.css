@@ -73,12 +73,8 @@
 }
 
 .productImage img {
-  object-fit: cover;
-  transition: transform 260ms ease;
-}
-
-.productCard:hover .productImage img {
-  transform: scale(1.025);
+  object-fit: contain;
+  object-position: center;
 }
 
 .productImage > span {
