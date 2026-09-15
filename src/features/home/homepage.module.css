@@ -587,7 +587,7 @@
 
 .modules {
   position: relative;
-  padding: clamp(24px, 1.7vw, 32px) 0 26px;
+  padding: clamp(16px, 1.25vw, 22px) 0 18px;
   background: #fbfdfa;
 }
 
@@ -612,7 +612,7 @@
 .moduleRail {
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0 7vw 8px;
+  padding: 0 7vw 6px;
   cursor: grab;
   scrollbar-width: none;
   touch-action: pan-y;
@@ -631,11 +631,11 @@
 .moduleTrack {
   display: flex;
   width: max-content;
-  gap: 18px;
+  gap: 12px;
 }
 
 .moduleTrack > a {
-  min-width: clamp(340px, 29vw, 510px);
+  min-width: clamp(210px, 18vw, 290px);
   overflow: hidden;
   border-radius: 7px;
   box-shadow: 0 2px 9px rgba(65, 49, 37, 0.1);
@@ -679,7 +679,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  padding: 10px 7vw 0;
+  padding: 7px 7vw 0;
   color: #6c665f;
   font-size: 12px;
 }
@@ -4205,7 +4205,7 @@
     display: none;
   }
   .moduleTrack > a {
-    min-width: 84vw;
+    min-width: min(68vw, 270px);
   }
   .sectionHeading {
     padding-inline: 8vw;

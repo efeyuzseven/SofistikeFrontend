@@ -1,6 +1,7 @@
 "use client";
 
 import Image, { type ImageLoaderProps } from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useCart } from "@/features/cart/cart-context";
 import type { HomeBanner } from "@/lib/banners";
@@ -20,6 +21,7 @@ import styles from "./homepage.module.css";
 
 type ModuleItem = {
   name: string;
+  categorySlug: string;
   color: string;
   x: number;
   y: number;
@@ -123,15 +125,69 @@ const brandPalette = {
 } as const;
 
 const modules: ModuleItem[] = [
-  { name: "Uyku", color: brandPalette.softPurple, x: 2.87, y: 11.37 },
-  { name: "Ev Tekstili", color: brandPalette.terracotta, x: 34.51, y: 11.37 },
-  { name: "Aroma", color: brandPalette.olive, x: 66.09, y: 11.37 },
-  { name: "Mutfak", color: brandPalette.ochre, x: 2.87, y: 40.59 },
-  { name: "Banyo", color: brandPalette.deepTeal, x: 34.51, y: 40.59 },
-  { name: "Çamaşır", color: brandPalette.mistMint, x: 66.09, y: 40.59 },
-  { name: "Dekorasyon", color: brandPalette.ochre, x: 2.87, y: 69.5 },
-  { name: "Evcil Dostlar", color: brandPalette.terracotta, x: 34.51, y: 69.5 },
-  { name: "İnovasyon Lab", color: brandPalette.midnight, x: 66.09, y: 69.5 },
+  {
+    name: "Uyku",
+    categorySlug: "uyku",
+    color: brandPalette.softPurple,
+    x: 2.87,
+    y: 11.37,
+  },
+  {
+    name: "Ev Tekstili",
+    categorySlug: "ev-tekstili",
+    color: brandPalette.terracotta,
+    x: 34.51,
+    y: 11.37,
+  },
+  {
+    name: "Aroma",
+    categorySlug: "aroma",
+    color: brandPalette.olive,
+    x: 66.09,
+    y: 11.37,
+  },
+  {
+    name: "Mutfak",
+    categorySlug: "mutfak",
+    color: brandPalette.ochre,
+    x: 2.87,
+    y: 40.59,
+  },
+  {
+    name: "Banyo",
+    categorySlug: "banyo",
+    color: brandPalette.deepTeal,
+    x: 34.51,
+    y: 40.59,
+  },
+  {
+    name: "Çamaşır",
+    categorySlug: "laundry-care",
+    color: brandPalette.mistMint,
+    x: 66.09,
+    y: 40.59,
+  },
+  {
+    name: "Dekorasyon",
+    categorySlug: "living-room",
+    color: brandPalette.ochre,
+    x: 2.87,
+    y: 69.5,
+  },
+  {
+    name: "Evcil Dostlar",
+    categorySlug: "evcil-dostlar",
+    color: brandPalette.terracotta,
+    x: 34.51,
+    y: 69.5,
+  },
+  {
+    name: "İnovasyon Lab",
+    categorySlug: "innovation-lab",
+    color: brandPalette.midnight,
+    x: 66.09,
+    y: 69.5,
+  },
 ];
 
 const fallbackFeaturedProducts: ProductItem[] = [
@@ -1064,15 +1120,6 @@ export default function HomePage() {
       ) : null}
 
       <section className={styles.modules} id="moduller">
-        <div className={styles.sectionHeading}>
-          <div>
-            <h2>Hayatınıza uygun çözümü seçin</h2>
-            <p>
-              Yavaşça ilerleyen kartları fareyle veya dokunarak iki yöne
-              sürükleyebilirsiniz.
-            </p>
-          </div>
-        </div>
         <div
           className={`${styles.moduleRail} ${dragging ? styles.dragging : ""}`}
           onPointerDown={startModuleDrag}
@@ -1083,15 +1130,11 @@ export default function HomePage() {
         >
           <div className={styles.moduleTrack}>
             {[...modules, ...modules].map((item, index) => (
-              <a
+              <Link
                 data-module-card
-                href={
-                  item.name === "İnovasyon Lab"
-                    ? "#innovation-lab"
-                    : "#moduller"
-                }
+                href={`/kategori/${encodeURIComponent(item.categorySlug)}`}
                 key={`${item.name}-${index}`}
-                aria-label={`${item.name} modülünü keşfet`}
+                aria-label={`${item.name} ürünlerini görüntüle`}
                 aria-hidden={index >= modules.length}
                 tabIndex={index >= modules.length ? -1 : undefined}
                 onClick={(event) => {
@@ -1102,7 +1145,7 @@ export default function HomePage() {
                 }}
               >
                 <SpriteCard item={item} />
-              </a>
+              </Link>
             ))}
           </div>
         </div>
