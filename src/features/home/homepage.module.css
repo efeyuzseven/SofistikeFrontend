@@ -3099,7 +3099,7 @@
   display: grid;
   grid-template-columns: minmax(270px, 0.36fr) minmax(0, 1fr);
   gap: clamp(28px, 3.5vw, 60px);
-  padding: clamp(54px, 5vw, 76px) 7vw;
+  padding: clamp(38px, 3.6vw, 56px) 7vw;
   scroll-margin-top: 112px;
   border-top: 1px solid var(--warm-sand);
   border-bottom: 1px solid var(--warm-sand);
@@ -3195,8 +3195,40 @@
 }
 
 .featuredRail {
+  width: 100%;
+  max-width: 960px;
+  align-self: center;
   grid-auto-columns: minmax(250px, 1fr);
   gap: 16px;
+}
+
+.productShowcase .productVisual {
+  min-height: 176px;
+}
+
+.productShowcase .productInfo {
+  padding: 16px 20px 17px;
+}
+
+.productShowcase .productInfo h3 {
+  min-height: 34px;
+  margin: 7px 0;
+}
+
+.productShowcase .productRating {
+  margin-bottom: 7px;
+}
+
+.productShowcase .productInfo p {
+  min-height: 44px;
+}
+
+.productShowcase .productAvailability {
+  margin-top: 6px;
+}
+
+.productShowcase .productMeta {
+  margin-top: 12px;
 }
 
 .bestSellerRail {
