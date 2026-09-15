@@ -1,66 +1,68 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { CartLink } from "@/features/cart/cart-link";
+import type { CatalogCategory, CategoryMenuGroup } from "@/lib/catalog";
 import { AccountMenu } from "./account-menu";
 import styles from "./site-header.module.css";
 
-const menuGroups = [
+type HeaderMenuGroup = {
+  label: string;
+  menuGroup: CategoryMenuGroup;
+  items: Array<Pick<CatalogCategory, "name" | "slug">>;
+};
+
+const fallbackMenuGroups: HeaderMenuGroup[] = [
   {
     label: "Shop by Solution",
+    menuGroup: "Solution",
     items: [
-      "Sleep Better",
-      "Allergy Care",
-      "Home Reset",
-      "Laundry Care",
-      "Bathroom Care",
-      "Kitchen Care",
-      "Pet Friendly",
-      "Healthy Living",
-      "Organization",
+      { name: "Sleep Better", slug: "sleep-better" },
+      { name: "Allergy Care", slug: "allergy-care" },
+      { name: "Home Reset", slug: "home-reset" },
+      { name: "Laundry Care", slug: "laundry-care" },
+      { name: "Bathroom Care", slug: "bathroom-care" },
+      { name: "Kitchen Care", slug: "kitchen-care" },
+      { name: "Pet Friendly", slug: "pet-friendly" },
+      { name: "Healthy Living", slug: "healthy-living" },
+      { name: "Organization", slug: "organization" },
     ],
   },
   {
     label: "Shop by Room",
+    menuGroup: "Room",
     items: [
-      "Bedroom",
-      "Bathroom",
-      "Living Room",
-      "Kitchen",
-      "Laundry Room",
-      "Kids Room",
-      "Guest Room",
-      "Pet Area",
-      "Travel",
+      { name: "Bedroom", slug: "bedroom" },
+      { name: "Bathroom", slug: "bathroom" },
+      { name: "Living Room", slug: "living-room" },
+      { name: "Kitchen", slug: "kitchen-room" },
+      { name: "Laundry Room", slug: "laundry-room" },
+      { name: "Kids Room", slug: "kids-room" },
+      { name: "Guest Room", slug: "guest-room" },
+      { name: "Pet Area", slug: "pet-area" },
+      { name: "Travel", slug: "travel" },
     ],
   },
   {
     label: "Shop by Category",
+    menuGroup: "Category",
     items: [
-      "Bedding",
-      "Bath",
-      "Home Fragrance",
-      "Laundry",
-      "Cleaning",
-      "Kitchen",
-      "Personal Care",
-      "Storage & Organization",
-      "Pet Care",
+      { name: "Uyku", slug: "uyku" },
+      { name: "Ev Tekstili", slug: "ev-tekstili" },
+      { name: "Aroma", slug: "aroma" },
+      { name: "Mutfak", slug: "mutfak" },
+      { name: "Banyo", slug: "banyo" },
+      { name: "Evcil Dostlar", slug: "evcil-dostlar" },
     ],
   },
-] as const;
+];
 
 const directLinks = {
   "New Arrivals": "/?menu=new-arrivals",
   "Best Sellers": "/#urunler",
   "Innovation Lab": "/#innovation-lab",
 } as const;
-
-function toSlug(value: string) {
-  return value
-    .toLowerCase()
-    .replaceAll("&", "and")
-    .replaceAll(/[^a-z0-9]+/g, "-")
-    .replaceAll(/(^-|-$)/g, "");
-}
 
 function HeaderIcon({ name }: { name: "search" }) {
   const commonProps = {
@@ -97,6 +99,46 @@ function BrandMark() {
 }
 
 export function SiteHeader() {
+  const [menuGroups, setMenuGroups] =
+    useState<HeaderMenuGroup[]>(fallbackMenuGroups);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadCategories() {
+      try {
+        const response = await fetch("/api/catalog/categories", {
+          cache: "no-store",
+        });
+        if (!response.ok) throw new Error("Categories could not be loaded.");
+
+        const categories = (await response.json()) as CatalogCategory[];
+        if (cancelled) return;
+
+        setMenuGroups(
+          fallbackMenuGroups.map((group) => ({
+            ...group,
+            items: categories
+              .filter((category) => category.menuGroup === group.menuGroup)
+              .sort(
+                (left, right) =>
+                  left.displayOrder - right.displayOrder ||
+                  left.name.localeCompare(right.name, "tr-TR"),
+              )
+              .map(({ name, slug }) => ({ name, slug })),
+          })),
+        );
+      } catch {
+        // Kategori servisi geçici olarak kullanılamazsa sabit menü korunur.
+      }
+    }
+
+    void loadCategories();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <header className={styles.siteHeader}>
       <div className={styles.utilityBar}>
@@ -127,9 +169,9 @@ export function SiteHeader() {
                 </div>
                 <ul>
                   {group.items.map((item) => (
-                    <li key={item}>
-                      <Link href={`/?menu=${toSlug(item)}`}>
-                        {item}
+                    <li key={item.slug}>
+                      <Link href={`/kategori/${encodeURIComponent(item.slug)}`}>
+                        {item.name}
                         <span aria-hidden="true">↗</span>
                       </Link>
                     </li>
@@ -169,8 +211,12 @@ export function SiteHeader() {
                   <summary>{group.label}</summary>
                   <ul>
                     {group.items.map((item) => (
-                      <li key={item}>
-                        <Link href={`/?menu=${toSlug(item)}`}>{item}</Link>
+                      <li key={item.slug}>
+                        <Link
+                          href={`/kategori/${encodeURIComponent(item.slug)}`}
+                        >
+                          {item.name}
+                        </Link>
                       </li>
                     ))}
                   </ul>

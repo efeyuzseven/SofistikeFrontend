@@ -968,7 +968,7 @@ export default function HomePage() {
                     <h3>{group.title}</h3>
                     {group.links.map(([icon, link, slug]) => (
                       <a
-                        href={`/?category=${encodeURIComponent(slug)}#tum-urunler`}
+                        href={`/kategori/${encodeURIComponent(slug)}`}
                         key={slug}
                         onClick={() => setShopOpen(false)}
                       >

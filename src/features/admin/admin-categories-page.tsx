@@ -451,7 +451,7 @@ export function AdminCategoriesPage() {
                                 <span>{category.productCount} ürün</span>
                               </div>
                               <h4>{category.name}</h4>
-                              <p>/?category={category.slug}</p>
+                              <p>/kategori/{category.slug}</p>
                             </div>
                             <div className={styles.categoryActions}>
                               <button
